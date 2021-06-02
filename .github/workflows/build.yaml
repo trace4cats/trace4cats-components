@@ -66,11 +66,12 @@ jobs:
           docker push janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER
           docker push janstenpickle/trace4cats-agent:latest
 
-          if echo $VERSION | grep '+'; then
-            exit 0
-          else
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
+            echo "Pushing versioned image $VERSION"
             docker tag janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent:$VERSION
             docker push janstenpickle/trace4cats-agent:$VERSION
+          else
+            exit 0
           fi
 
           popd
@@ -132,11 +133,12 @@ jobs:
           docker push janstenpickle/trace4cats-agent-kafka:$GITHUB_RUN_NUMBER
           docker push janstenpickle/trace4cats-agent-kafka:latest
 
-          if echo $VERSION | grep '+'; then
-            exit 0
-          else
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
+            echo "Pushing versioned image $VERSION"
             docker tag janstenpickle/trace4cats-agent-kafka:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent-kafka:$VERSION
             docker push janstenpickle/trace4cats-agent-kafka:$VERSION
+          else
+            exit 0
           fi
 
           popd
@@ -196,11 +198,12 @@ jobs:
           docker push janstenpickle/trace4cats-collector-lite:$GITHUB_RUN_NUMBER
           docker push janstenpickle/trace4cats-collector-lite:latest
 
-          if echo $VERSION | grep '+'; then
-            exit 0
-          else
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
+            echo "Pushing versioned image $VERSION"
             docker tag janstenpickle/trace4cats-collector-lite:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-collector-lite:$VERSION
             docker push janstenpickle/trace4cats-collector-lite:$VERSION
+          else
+            exit 0
           fi
 
           popd
@@ -254,11 +257,12 @@ jobs:
           docker push janstenpickle/trace4cats-collector:$GITHUB_RUN_NUMBER
           docker push janstenpickle/trace4cats-collector:latest
 
-          if echo $VERSION | grep '+'; then
-            exit 0
-          else
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
+            echo "Pushing versioned image $VERSION"
             docker tag janstenpickle/trace4cats-collector:latest janstenpickle/trace4cats-collector:$VERSION
             docker push janstenpickle/trace4cats-collector:$VERSION
+          else
+            exit 0
           fi
 
   test:
