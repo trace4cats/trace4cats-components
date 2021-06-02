@@ -237,11 +237,6 @@ jobs:
     runs-on: ubuntu-latest
 
 
-    strategy:
-      matrix:
-        scala-version:
-          - "2.12.14"
-          - "2.13.6"
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -252,9 +247,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-
-      - name: docker containers
-        run: docker-compose up -d
 
       - name: Cache ivy2
         uses: actions/cache@v2
@@ -277,4 +269,4 @@ jobs:
 
       - name: scala build
         run: |
-          sbt -Dsbt.coursier.home=~/.sbt/coursier/ ++${{ matrix.scala-version }} '; scalafmtCheckAll; scalafmtSbtCheck; compile; test' -J-Xms3G -J-Xmx6G -J-Xss4m
+          sbt -Dsbt.coursier.home=~/.sbt/coursier/ '; scalafmtCheckAll; scalafmtSbtCheck; compile; test' -J-Xms3G -J-Xmx6G -J-Xss4m
