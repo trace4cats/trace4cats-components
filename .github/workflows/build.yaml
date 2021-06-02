@@ -58,8 +58,16 @@ jobs:
           pushd modules/agent/src/main/docker
           sh build.sh
 
-          docker tag janstenpickle/trace4cats-agent:latest janstenpickle/trace4cats-agent:$VERSION
+          docker tag janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent:latest
+          docker push janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER
           docker push janstenpickle/trace4cats-agent:latest
+
+          if echo $VERSION | grep '+'; then
+            exit 0
+          else
+            docker tag janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent:$VERSION
+            docker push janstenpickle/trace4cats-agent:$VERSION
+          fi
 
           popd
 
@@ -116,8 +124,16 @@ jobs:
           pushd modules/agent-kafka/src/main/docker
           sh build.sh
 
-          docker tag janstenpickle/trace4cats-agent-kafka:latest janstenpickle/trace4cats-agent-kafka:$VERSION
-          docker push janstenpickle/trace4cats-agent-kafka
+          docker tag janstenpickle/trace4cats-agent-kafka:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent-kafka:latest
+          docker push janstenpickle/trace4cats-agent-kafka:$GITHUB_RUN_NUMBER
+          docker push janstenpickle/trace4cats-agent-kafka:latest
+
+          if echo $VERSION | grep '+'; then
+            exit 0
+          else
+            docker tag janstenpickle/trace4cats-agent-kafka:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent-kafka:$VERSION
+            docker push janstenpickle/trace4cats-agent-kafka:$VERSION
+          fi
 
           popd
 
@@ -174,8 +190,16 @@ jobs:
           pushd modules/collector-lite/src/main/docker
           sh build.sh
 
-          docker tag janstenpickle/trace4cats-collector-lite:latest janstenpickle/trace4cats-collector-lite:$VERSION
-          docker push janstenpickle/trace4cats-collector-lite
+          docker tag janstenpickle/trace4cats-collector-lite:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-collector-lite:latest
+          docker push janstenpickle/trace4cats-collector-lite:$GITHUB_RUN_NUMBER
+          docker push janstenpickle/trace4cats-collector-lite:latest
+
+          if echo $VERSION | grep '+'; then
+            exit 0
+          else
+            docker tag janstenpickle/trace4cats-collector-lite:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-collector-lite:$VERSION
+            docker push janstenpickle/trace4cats-collector-lite:$VERSION
+          fi
 
           popd
 
@@ -216,7 +240,7 @@ jobs:
       - name: scala build
         shell: bash
         run: |
-          sbt -Dsbt.coursier.home=~/.sbt/coursier/ "; project collector; set version in ThisBuild := \"latest\"; docker:publishLocal" -J-Xms3G -J-Xmx6G -J-Xss4m
+          sbt -Dsbt.coursier.home=~/.sbt/coursier/ "; project collector; set ThisBuild / version := \"latest\"; docker:publishLocal" -J-Xms3G -J-Xmx6G -J-Xss4m
       - name: docker login
         run: docker login -u janstenpickle -p '${{secrets.DOCKERHUB}}'
       - name: docker build
@@ -224,8 +248,16 @@ jobs:
         run: |
           export VERSION=`sbt --error 'print version' | tail -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//'`
 
-          docker tag janstenpickle/trace4cats-collector:latest janstenpickle/trace4cats-collector:$VERSION
-          docker push janstenpickle/trace4cats-collector
+          docker tag janstenpickle/trace4cats-collector:latest janstenpickle/trace4cats-collector:$GITHUB_RUN_NUMBER
+          docker push janstenpickle/trace4cats-collector:$GITHUB_RUN_NUMBER
+          docker push janstenpickle/trace4cats-collector:latest
+
+          if echo $VERSION | grep '+'; then
+            exit 0
+          else
+            docker tag janstenpickle/trace4cats-collector:latest janstenpickle/trace4cats-collector:$VERSION
+            docker push janstenpickle/trace4cats-collector:$VERSION
+          fi
 
   test:
 
