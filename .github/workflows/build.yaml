@@ -216,11 +216,6 @@ jobs:
       - name: scala build
         shell: bash
         run: |
-          export VERSION=`sbt --error 'print version' | tail -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//'`
-          PAT='^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$'
-          if [[ $VERSION =~ $PAT ]]; then
-            VERSION="latest"
-          fi
           sbt -Dsbt.coursier.home=~/.sbt/coursier/ "; project collector; set version in ThisBuild := \"latest\"; docker:publishLocal" -J-Xms3G -J-Xmx6G -J-Xss4m
       - name: docker login
         run: docker login -u janstenpickle -p '${{secrets.DOCKERHUB}}'
