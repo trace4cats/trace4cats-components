@@ -5,7 +5,7 @@ object Dependencies {
     val trace4cats = "0.12.0-RC1"
 
     val circe = "0.14.1"
-    val circeYaml = "0.13.1"
+    val circeYaml = "0.14.0"
     val decline = "2.0.0"
     val http4sJdkClient = "0.5.0-RC1"
     val grpc = "1.38.0"
