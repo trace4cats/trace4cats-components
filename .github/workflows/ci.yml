@@ -110,14 +110,6 @@ jobs:
           tar xf targets.tar
           rm targets.tar
 
-      - name: Setup GraalVM CE
-        id: setup_graalvm
-        uses: rinx/setup-graalvm-ce@v0.0.5
-        with:
-          graalvm-version: 20.1.0
-          java-version: java11
-          native-image: true
-
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v3
@@ -130,6 +122,14 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
+
+      - name: Setup GraalVM CE
+        id: setup_graalvm
+        uses: rinx/setup-graalvm-ce@v0.0.5
+        with:
+          graalvm-version: 20.2.0
+          java-version: java11
+          native-image: true
 
       - name: Login to Dockerhub
         run: docker login -u janstenpickle -p '${{ secrets.DOCKERHUB }}'
