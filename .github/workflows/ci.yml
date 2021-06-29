@@ -110,6 +110,14 @@ jobs:
           tar xf targets.tar
           rm targets.tar
 
+      - name: Setup GraalVM CE
+        id: setup_graalvm
+        uses: rinx/setup-graalvm-ce@v0.0.5
+        with:
+          graalvm-version: 20.2.0
+          java-version: java11
+          native-image: true
+
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v3
@@ -123,19 +131,16 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
 
-      - name: Setup GraalVM CE
-        id: setup_graalvm
-        uses: rinx/setup-graalvm-ce@v0.0.5
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          graalvm-version: 20.2.0
-          java-version: java11
-          native-image: true
-
-      - name: Login to Dockerhub
-        run: docker login -u janstenpickle -p '${{ secrets.DOCKERHUB }}'
+          username: janstenpickle
+          password: ${{ secrets.DOCKERHUB }}
 
       - name: Export RELEASE_VERSION
-        run: 'echo "RELEASE_VERSION=$(sbt --client --error ''print version'' | tail -n 2 | head -n 1 |  sed ''s/^[[:blank:]]*//;s/[[:blank:]]*$//'')" >> $GITHUB_ENV'
+        run: |
+           echo "RELEASE_VERSION=$(sbt --client --error ''print version'' | tail -n 2 | head -n 1 |  sed ''s/^[[:blank:]]*//;s/[[:blank:]]*$//'')"
+           echo "RELEASE_VERSION=$(sbt --client --error ''print version'' | tail -n 2 | head -n 1 |  sed ''s/^[[:blank:]]*//;s/[[:blank:]]*$//'')" >> $GITHUB_ENV
 
       - name: Build native image for `trace4cats-agent`
         run: 'sbt --client ''++${{ matrix.scala }}; project agent; graalvm-native-image:packageBin'''
