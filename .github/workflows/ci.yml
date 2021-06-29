@@ -114,7 +114,7 @@ jobs:
         id: setup_graalvm
         uses: rinx/setup-graalvm-ce@v0.0.5
         with:
-          graalvm-version: 20.2.0
+          graalvm-version: 20.1.0
           java-version: java11
           native-image: true
 
@@ -139,8 +139,8 @@ jobs:
 
       - name: Export RELEASE_VERSION
         run: |
-           echo "RELEASE_VERSION=$(sbt --client --error ''print version'' | tail -n 2 | head -n 1 |  sed ''s/^[[:blank:]]*//;s/[[:blank:]]*$//'')"
-           echo "RELEASE_VERSION=$(sbt --client --error ''print version'' | tail -n 2 | head -n 1 |  sed ''s/^[[:blank:]]*//;s/[[:blank:]]*$//'')" >> $GITHUB_ENV
+           echo "RELEASE_VERSION=$(sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')"
+           echo "RELEASE_VERSION=$(sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')" >> $GITHUB_ENV
 
       - name: Build native image for `trace4cats-agent`
         run: 'sbt --client ''++${{ matrix.scala }}; project agent; graalvm-native-image:packageBin'''
