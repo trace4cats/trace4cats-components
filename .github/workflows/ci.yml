@@ -139,7 +139,7 @@ jobs:
 
       - name: Export RELEASE_VERSION
         run: |
-           echo "RELEASE_VERSION=$(sbt --client --error 'print version'
+           sbt --client --error 'print version'
            echo "RELEASE_VERSION=$(sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')" >> $GITHUB_ENV
 
       - name: Build native image for `trace4cats-agent`
