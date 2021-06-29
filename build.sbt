@@ -1,35 +1,26 @@
 lazy val commonSettings = Seq(
-  scalaVersion := Dependencies.Versions.scala213,
-  organization := "io.janstenpickle",
-  organizationName := "janstenpickle",
-  developers := List(
-    Developer(
-      "janstenpickle",
-      "Chris Jansen",
-      "janstenpickle@users.noreply.github.com",
-      url = url("https://github.com/janstepickle")
-    )
-  ),
-  licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-  homepage := Some(url("https://github.com/janstenpickle/trace4cats")),
-  scmInfo := Some(
-    ScmInfo(url("https://github.com/janstenpickle/trace4cats"), "scm:git:git@github.com:janstenpickle/trace4cats.git")
-  ),
-  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
-  addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.13.0").cross(CrossVersion.patch)),
-  scalacOptions := {
-    val opts = scalacOptions.value :+ "-Wconf:src=src_managed/.*:s,any:wv"
-
+  Compile / compile / javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
+  libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 12)) => opts.filterNot(Set("-Xfatal-warnings"))
+      case Some((2, _)) =>
+        Seq(compilerPlugin(Dependencies.kindProjector), compilerPlugin(Dependencies.betterMonadicFor))
+      case _ => Seq.empty
+    }
+  },
+  scalacOptions := {
+    val opts = scalacOptions.value
+    val wconf = "-Wconf:any:wv"
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, _)) => opts :+ wconf
       case _ => opts
     }
   },
   Test / fork := true,
-  ThisBuild / evictionErrorLevel := Level.Warn
+  resolvers += Resolver.sonatypeRepo("releases"),
 )
 
-lazy val noPublishSettings = commonSettings ++ Seq(publish := {}, publishArtifact := false, publishTo := None)
+lazy val noPublishSettings =
+  commonSettings ++ Seq(publish := {}, publishArtifact := false, publishTo := None, publish / skip := true)
 
 lazy val publishSettings = commonSettings ++ Seq(
   publishMavenStyle := true,
@@ -109,7 +100,7 @@ lazy val `agent-kafka` = (project in file("modules/agent-kafka"))
   .settings(graalSettings)
   .settings(
     name := "trace4cats-agent-kafka",
-    libraryDependencies ++= Seq(Dependencies.trace4catsAvroKafkaExporter, Dependencies.trace4catsGraalKafka)
+    libraryDependencies ++= Seq(Dependencies.trace4catsAvroKafkaExporter, Dependencies.graalKafkaClient)
   )
   .dependsOn(`agent-common`)
   .enablePlugins(GraalVMNativeImagePlugin)
@@ -183,11 +174,8 @@ lazy val `collector-lite` = (project in file("modules/collector-lite"))
       Dependencies.declineEffect,
       Dependencies.log4cats,
       Dependencies.logback,
-      Dependencies.trace4catsGraalKafka
+      Dependencies.graalKafkaClient
     )
   )
   .dependsOn(`collector-common`)
   .enablePlugins(GraalVMNativeImagePlugin)
-
-addCommandAlias("fmt", "all root/scalafmtSbt root/scalafmtAll")
-addCommandAlias("fmtCheck", "all root/scalafmtSbtCheck root/scalafmtCheckAll")

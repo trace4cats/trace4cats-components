@@ -11,8 +11,7 @@ pull_request_rules:
   - name: automatically merge scala-steward's PRs affecting project plugins
     conditions:
       - author=scala-steward
-      - status-success~=test \(2.12
-      - status-success~=test \(2.13
+      - status-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
       - "#files=1"
       - files=project/plugins.sbt
     actions:
@@ -22,8 +21,7 @@ pull_request_rules:
   - name: automatically merge scala-steward's PRs affecting project build properties
     conditions:
       - author=scala-steward
-      - status-success~=test \(2.12
-      - status-success~=test \(2.13
+      - status-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
       - "#files=1"
       - files=project/build.properties
     actions:
@@ -33,8 +31,7 @@ pull_request_rules:
   - name: automatically merge scala-steward's PRs updating semver-patch versions
     conditions:
       - author=scala-steward
-      - status-success~=test \(2.12
-      - status-success~=test \(2.13
+      - status-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
       - body~=labels:.*semver-patch
     actions:
       merge:
@@ -43,8 +40,7 @@ pull_request_rules:
   - name: automatically merge other scala-steward's PRs reviewed by 1 maintainer
     conditions:
       - author=scala-steward
-      - status-success~=test \(2.12
-      - status-success~=test \(2.13
+      - status-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
       - "#approved-reviews-by>=1"
     actions:
       merge:
