@@ -139,8 +139,10 @@ jobs:
 
       - name: Export RELEASE_VERSION
         run: |
-           sbt --client --error 'print version'
-           echo "RELEASE_VERSION=$(sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')" >> $GITHUB_ENV
+          sbt --client --error 'print version'
+          sbt --client --error 'print version' | tail -n 2
+          sbt --client --error 'print version' | tail -n 2 | head -n 1
+          echo "RELEASE_VERSION=$(sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')" >> $GITHUB_ENV
 
       - name: Build native image for `trace4cats-agent`
         run: 'sbt --client ''++${{ matrix.scala }}; project agent; graalvm-native-image:packageBin'''
@@ -149,20 +151,14 @@ jobs:
         run: |
           pushd modules/agent/src/main/docker
           sh build.sh
-          popd
-
-      - name: Push Docker image for `trace4cats-agent`
-        run: |
           docker tag janstenpickle/trace4cats-agent:latest janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER
           docker push janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER
           docker push janstenpickle/trace4cats-agent:latest
-
-      - name: Push versioned Docker image for `trace4cats-agent`
-        run: |
           if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
             docker tag janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
             docker push janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
           fi
+          popd
 
       - name: Build native image for `trace4cats-agent-kafka`
         run: 'sbt --client ''++${{ matrix.scala }}; project agent-kafka; graalvm-native-image:packageBin'''
