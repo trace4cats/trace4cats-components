@@ -52,8 +52,8 @@ jobs:
       - name: Check formatting
         run: sbt --client '++${{ matrix.scala }}; scalafmtCheckAll; scalafmtSbtCheck'
 
-      - name: Check that workflows are up to date
-        run: sbt --client '++${{ matrix.scala }}; githubWorkflowCheck'
+#      - name: Check that workflows are up to date
+#        run: sbt --client '++${{ matrix.scala }}; githubWorkflowCheck'
 
       - name: Build project
         run: sbt --client '++${{ matrix.scala }}; test'
@@ -70,7 +70,7 @@ jobs:
   publish:
     name: Publish Artifacts
     needs: [build]
-    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master') && (github.actor != 'mergify[bot]')
+#    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master') && (github.actor != 'mergify[bot]')
     strategy:
       matrix:
         os: [ubuntu-latest]
