@@ -125,11 +125,11 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PGP_PASS }}
 
-      - name: Publish artifacts
-        env:
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-        run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
+#      - name: Publish artifacts
+#        env:
+#          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+#          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+#        run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -139,7 +139,7 @@ jobs:
 
       - name: Export RELEASE_VERSION
         run: |
-           echo "RELEASE_VERSION=$(sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')"
+           echo "RELEASE_VERSION=$(sbt --client --error 'print version'
            echo "RELEASE_VERSION=$(sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')" >> $GITHUB_ENV
 
       - name: Build native image for `trace4cats-agent`

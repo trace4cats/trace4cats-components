@@ -32,7 +32,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
       ref = UseRef.Public("rinx", "setup-graalvm-ce", "v0.0.5"),
       id = Some("setup_graalvm"),
       name = Some("Setup GraalVM CE"),
-      params = Map("graalvm-version" -> "20.2.0", "java-version" -> "java11", "native-image" -> "true")
+      params = Map("graalvm-version" -> "20.1.0", "java-version" -> "java11", "native-image" -> "true")
     ),
     WorkflowStep.Run(
       name = Some("Login to Dockerhub"),
@@ -52,7 +52,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
         Seq(
           WorkflowStep.Sbt(
             name = Some(s"Build native image for `$imgName`"),
-            commands = List(s"project $module", "graalvm-native-image:packageBin")
+            commands = List(s"project $module", "graalvm-native-image / packageBin")
           ),
           WorkflowStep.Run(
             name = Some(s"Build Docker image for `$imgName`"),
@@ -63,7 +63,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
         Seq(
           WorkflowStep.Sbt(
             name = Some(s"Build Docker image for `$imgName`"),
-            commands = List(s"project $module", "set ThisBuild / version := \"latest\"", "docker:publishLocal")
+            commands = List(s"project $module", "set ThisBuild / version := \"latest\"", "docker / publishLocal")
           )
         )
 
