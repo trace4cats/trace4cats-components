@@ -131,34 +131,41 @@ jobs:
 #          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
 #        run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: janstenpickle
-          password: ${{ secrets.DOCKERHUB }}
+      - name: Login to Dockerhub
+        run: docker login -u janstenpickle -p '${{ secrets.DOCKERHUB }}'
+
+      - name: Compute ver
+        run: |
+          sbt --client --no-colors 'inspect actual root / version'
+          sbt --client --no-colors 'inspect actual root / version' | grep "Setting: java.lang.String" | cut -d '=' -f2 | tr -d ' '
 
       - name: Export RELEASE_VERSION
-        run: |
-          sbt --client --no-colors 'inspect actual version' | grep "Setting: java.lang.String" | cut -d '=' -f2 | tr -d ' '
-          echo "RELEASE_VERSION=$(sbt --client --no-colors 'inspect actual version' | grep "Setting: java.lang.String" | cut -d '=' -f2 | tr -d ' ')" >> $GITHUB_ENV
+        run: 'echo "RELEASE_VERSION=$(sbt --client --error ''print version'' | tail -n 2 | head -n 1 |  sed ''s/^[[:blank:]]*//;s/[[:blank:]]*$//'')" >> $GITHUB_ENV'
 
       - name: Build native image for `trace4cats-agent`
-        run: 'sbt --client ''++${{ matrix.scala }}; project agent; graalvm-native-image:packageBin'''
+        run: sbt --client '++${{ matrix.scala }}; project agent; graalvm-native-image / packageBin'
 
       - name: Build Docker image for `trace4cats-agent`
         run: |
           pushd modules/agent/src/main/docker
           sh build.sh
-          docker tag janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent:latest
-          docker push janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER
-          if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
-            docker push janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
-          fi
           popd
 
+      - name: Push Docker image for `trace4cats-agent`
+        run: |
+          docker tag janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent:latest
+          docker push janstenpickle/trace4cats-agent:$GITHUB_RUN_NUMBER
+          docker push janstenpickle/trace4cats-agent:latest
+
+      - name: Push versioned Docker image for `trace4cats-agent`
+        run: |
+          if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
+            docker tag janstenpickle/trace4cats-agent:latest janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
+            docker push janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
+          fi
+
       - name: Build native image for `trace4cats-agent-kafka`
-        run: 'sbt --client ''++${{ matrix.scala }}; project agent-kafka; graalvm-native-image:packageBin'''
+        run: sbt --client '++${{ matrix.scala }}; project agent-kafka; graalvm-native-image / packageBin'
 
       - name: Build Docker image for `trace4cats-agent-kafka`
         run: |
@@ -175,12 +182,12 @@ jobs:
       - name: Push versioned Docker image for `trace4cats-agent-kafka`
         run: |
           if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-agent-kafka:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
+            docker tag janstenpickle/trace4cats-agent-kafka:latest janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
             docker push janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
           fi
 
       - name: Build native image for `trace4cats-collector-lite`
-        run: 'sbt --client ''++${{ matrix.scala }}; project collector-lite; graalvm-native-image:packageBin'''
+        run: sbt --client '++${{ matrix.scala }}; project collector-lite; graalvm-native-image / packageBin'
 
       - name: Build Docker image for `trace4cats-collector-lite`
         run: |
@@ -197,12 +204,12 @@ jobs:
       - name: Push versioned Docker image for `trace4cats-collector-lite`
         run: |
           if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-collector-lite:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
+            docker tag janstenpickle/trace4cats-collector-lite:latest janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
             docker push janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
           fi
 
       - name: Build Docker image for `trace4cats-collector`
-        run: 'sbt --client ''++${{ matrix.scala }}; project collector; set ThisBuild / version := "latest"; docker:publishLocal'''
+        run: 'sbt --client ''++${{ matrix.scala }}; project collector; set ThisBuild / version := "latest"; docker / publishLocal'''
 
       - name: Push Docker image for `trace4cats-collector`
         run: |
@@ -213,6 +220,6 @@ jobs:
       - name: Push versioned Docker image for `trace4cats-collector`
         run: |
           if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-collector:$GITHUB_RUN_NUMBER janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
+            docker tag janstenpickle/trace4cats-collector:latest janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
             docker push janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
           fi

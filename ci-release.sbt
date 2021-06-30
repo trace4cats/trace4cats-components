@@ -20,6 +20,12 @@ ThisBuild / githubWorkflowPublish := Seq(
 )
 ThisBuild / githubWorkflowPublishCond := Some("github.actor != 'mergify[bot]'")
 ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
+  ref = UseRef.Public("rinx", "setup-graalvm-ce", "v0.0.5"),
+  id = Some("setup_graalvm"),
+  name = Some("Setup GraalVM CE"),
+  params = Map("graalvm-version" -> "20.1.0", "java-version" -> "java11", "native-image" -> "true")
+)
+ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
   ref = UseRef.Public("crazy-max", "ghaction-import-gpg", "v3"),
   id = Some("import_gpg"),
   name = Some("Import GPG key"),
@@ -28,15 +34,16 @@ ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
 
 ThisBuild / githubWorkflowPublishPostamble ++= {
   val pre = Seq(
-    WorkflowStep.Use(
-      ref = UseRef.Public("rinx", "setup-graalvm-ce", "v0.0.5"),
-      id = Some("setup_graalvm"),
-      name = Some("Setup GraalVM CE"),
-      params = Map("graalvm-version" -> "20.1.0", "java-version" -> "java11", "native-image" -> "true")
-    ),
     WorkflowStep.Run(
       name = Some("Login to Dockerhub"),
       commands = List("docker login -u janstenpickle -p '${{ secrets.DOCKERHUB }}'")
+    ),
+    WorkflowStep.Run(
+      name = Some("Compute ver"),
+      commands = List(
+        "sbt --client --no-colors 'inspect actual root / version'",
+        "sbt --client --no-colors 'inspect actual root / version' | grep \"Setting: java.lang.String\" | cut -d '=' -f2 | tr -d ' '"
+      )
     ),
     WorkflowStep.ComputeVar(
       name = "RELEASE_VERSION",
@@ -71,7 +78,10 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
       WorkflowStep.Run(
         name = Some(s"Push Docker image for `$imgName`"),
         commands = List(
-          s"docker tag janstenpickle/$imgName:latest janstenpickle/$imgName:$$GITHUB_RUN_NUMBER",
+          if (nativeImage)
+            s"docker tag janstenpickle/$imgName:$$GITHUB_RUN_NUMBER janstenpickle/$imgName:latest"
+          else
+            s"docker tag janstenpickle/$imgName:latest janstenpickle/$imgName:$$GITHUB_RUN_NUMBER",
           s"docker push janstenpickle/$imgName:$$GITHUB_RUN_NUMBER",
           s"docker push janstenpickle/$imgName:latest"
         )
@@ -84,7 +94,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
           name = Some(s"Push versioned Docker image for `$imgName`"),
           commands = List(
             """if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then""",
-            s"  docker tag janstenpickle/$imgName:$$GITHUB_RUN_NUMBER janstenpickle/$imgName:$${{ env.RELEASE_VERSION }}",
+            s"  docker tag janstenpickle/$imgName:latest janstenpickle/$imgName:$${{ env.RELEASE_VERSION }}",
             s"  docker push janstenpickle/$imgName:$${{ env.RELEASE_VERSION }}",
             "fi"
           )
