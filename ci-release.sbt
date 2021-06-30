@@ -71,8 +71,8 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
       WorkflowStep.Run(
         name = Some(s"Push Docker images for '$name'"),
         commands = List(
-          s"docker tag janstenpickle/$name:$$GITHUB_RUN_NUMBER janstenpickle/$name:latest",
-          s"docker push janstenpickle/$name:$$GITHUB_RUN_NUMBER",
+          s"docker tag janstenpickle/$name:$${{ github.run_number }} janstenpickle/$name:latest",
+          s"docker push janstenpickle/$name:$${{ github.run_number }}",
           s"docker push janstenpickle/$name:latest"
         )
       )
@@ -84,7 +84,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
           name = Some(s"Push versioned Docker image for '$name'"),
           commands = List(
             """if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then""",
-            s"  docker tag janstenpickle/$name:$$GITHUB_RUN_NUMBER janstenpickle/$name:$${{ env.RELEASE_VERSION }}",
+            s"  docker tag janstenpickle/$name:$${{ github.run_number }} janstenpickle/$name:$${{ env.RELEASE_VERSION }}",
             s"  docker push janstenpickle/$name:$${{ env.RELEASE_VERSION }}",
             "fi"
           )

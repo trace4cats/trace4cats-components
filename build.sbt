@@ -69,6 +69,8 @@ lazy val graalSettings = Seq(
   )
 )
 
+Global / excludeLintKeys ++= Set(nativeImageVersion, nativeImageJvm)
+
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .settings(name := "Trace4Cats Components")
