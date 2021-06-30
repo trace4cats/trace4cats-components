@@ -31,7 +31,9 @@ lazy val publishSettings = commonSettings ++ Seq(
 )
 
 lazy val graalSettings = Seq(
-  graalVMNativeImageOptions ++= Seq(
+  nativeImageVersion := "20.1.0",
+  nativeImageJvm := "graalvm-java11",
+  nativeImageOptions ++= Seq(
     "--verbose",
     "--no-server",
     "--no-fallback",
@@ -93,7 +95,7 @@ lazy val agent = (project in file("modules/agent"))
   .settings(graalSettings)
   .settings(name := "trace4cats-agent", libraryDependencies ++= Seq(Dependencies.trace4catsAvroExporter))
   .dependsOn(`agent-common`)
-  .enablePlugins(GraalVMNativeImagePlugin)
+  .enablePlugins(NativeImagePlugin)
 
 lazy val `agent-kafka` = (project in file("modules/agent-kafka"))
   .settings(noPublishSettings)
@@ -103,7 +105,7 @@ lazy val `agent-kafka` = (project in file("modules/agent-kafka"))
     libraryDependencies ++= Seq(Dependencies.trace4catsAvroKafkaExporter, Dependencies.graalKafkaClient)
   )
   .dependsOn(`agent-common`)
-  .enablePlugins(GraalVMNativeImagePlugin)
+  .enablePlugins(NativeImagePlugin)
 
 lazy val `collector-common` = (project in file("modules/collector-common"))
   .settings(publishSettings)
@@ -178,4 +180,4 @@ lazy val `collector-lite` = (project in file("modules/collector-lite"))
     )
   )
   .dependsOn(`collector-common`)
-  .enablePlugins(GraalVMNativeImagePlugin)
+  .enablePlugins(NativeImagePlugin)

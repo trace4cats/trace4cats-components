@@ -20,12 +20,6 @@ ThisBuild / githubWorkflowPublish := Seq(
 )
 ThisBuild / githubWorkflowPublishCond := Some("github.actor != 'mergify[bot]'")
 ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
-  ref = UseRef.Public("rinx", "setup-graalvm-ce", "v0.0.5"),
-  id = Some("setup_graalvm"),
-  name = Some("Setup GraalVM CE"),
-  params = Map("graalvm-version" -> "20.1.0", "java-version" -> "java11", "native-image" -> "true")
-)
-ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
   ref = UseRef.Public("crazy-max", "ghaction-import-gpg", "v3"),
   id = Some("import_gpg"),
   name = Some("Import GPG key"),
@@ -46,15 +40,15 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
     )
   )
 
-  def perModule(module: String, nativeImage: Boolean) = {
+  def perModule(module: String, isNativeImage: Boolean) = {
     val name = s"trace4cats-$module"
 
     val buildImg =
-      if (nativeImage)
+      if (isNativeImage)
         Seq(
           WorkflowStep.Sbt(
             name = Some(s"Build GraalVM native image for '$name'"),
-            commands = List(s"project $module", "GraalVMNativeImage / packageBin")
+            commands = List(s"project $module", "nativeImage")
           ),
           WorkflowStep.Run(
             name = Some(s"Build Docker image for '$name'"),
@@ -65,8 +59,11 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
         Seq(
           WorkflowStep.Sbt(
             name = Some(s"Build Docker image for '$name'"),
-            commands =
-              List(s"project $module", "set ThisBuild / version := \"$GITHUB_RUN_NUMBER\"", "Docker / publishLocal")
+            commands = List(
+              s"project $module",
+              "set ThisBuild / version := \"${{ github.run_number }}\"",
+              "Docker / publishLocal"
+            )
           )
         )
 

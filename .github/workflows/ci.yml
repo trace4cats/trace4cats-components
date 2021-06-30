@@ -110,14 +110,6 @@ jobs:
           tar xf targets.tar
           rm targets.tar
 
-      - name: Setup GraalVM CE
-        id: setup_graalvm
-        uses: rinx/setup-graalvm-ce@v0.0.5
-        with:
-          graalvm-version: 20.1.0
-          java-version: java11
-          native-image: true
-
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v3
@@ -141,7 +133,7 @@ jobs:
         run: 'echo "RELEASE_VERSION=$(sbt -Dsbt.log.noformat=true --client ''inspect actual version'' | grep "Setting: java.lang.String" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
 
       - name: Build GraalVM native image for 'trace4cats-agent'
-        run: sbt --client '++${{ matrix.scala }}; project agent; GraalVMNativeImage / packageBin'
+        run: sbt --client '++${{ matrix.scala }}; project agent; nativeImage'
 
       - name: Build Docker image for 'trace4cats-agent'
         run: |
@@ -163,7 +155,7 @@ jobs:
           fi
 
       - name: Build GraalVM native image for 'trace4cats-agent-kafka'
-        run: sbt --client '++${{ matrix.scala }}; project agent-kafka; GraalVMNativeImage / packageBin'
+        run: sbt --client '++${{ matrix.scala }}; project agent-kafka; nativeImage'
 
       - name: Build Docker image for 'trace4cats-agent-kafka'
         run: |
@@ -185,7 +177,7 @@ jobs:
           fi
 
       - name: Build GraalVM native image for 'trace4cats-collector-lite'
-        run: sbt --client '++${{ matrix.scala }}; project collector-lite; GraalVMNativeImage / packageBin'
+        run: sbt --client '++${{ matrix.scala }}; project collector-lite; nativeImage'
 
       - name: Build Docker image for 'trace4cats-collector-lite'
         run: |
@@ -207,7 +199,7 @@ jobs:
           fi
 
       - name: Build Docker image for 'trace4cats-collector'
-        run: 'sbt --client ''++${{ matrix.scala }}; project collector; set ThisBuild / version := "$GITHUB_RUN_NUMBER"; Docker / publishLocal'''
+        run: 'sbt --client ''++${{ matrix.scala }}; project collector; set ThisBuild / version := "${{ github.run_number }}"; Docker / publishLocal'''
 
       - name: Push Docker images for 'trace4cats-collector'
         run: |
