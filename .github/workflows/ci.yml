@@ -134,16 +134,11 @@ jobs:
       - name: Login to Dockerhub
         run: docker login -u janstenpickle -p '${{ secrets.DOCKERHUB }}'
 
-      - name: Compute ver
-        run: |
-          sbt -Dsbt.log.noformat=true --client 'inspect actual root / version'
-          sbt -Dsbt.log.noformat=true --client 'inspect actual root / version' | grep "Setting: java.lang.String" | cut -d '=' -f2 | tr -d ' '
-
       - name: Export RELEASE_VERSION
         run: 'echo "RELEASE_VERSION=$(sbt -Dsbt.log.noformat=true --client ''inspect actual root / version'' | grep "Setting: java.lang.String" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
 
       - name: Build native image for `trace4cats-agent`
-        run: sbt --client '++${{ matrix.scala }}; project agent; graalvm-native-image / packageBin'
+        run: sbt --client '++${{ matrix.scala }}; project agent; graalvm-native-image:packageBin'
 
       - name: Build Docker image for `trace4cats-agent`
         run: |
@@ -165,7 +160,7 @@ jobs:
           fi
 
       - name: Build native image for `trace4cats-agent-kafka`
-        run: sbt --client '++${{ matrix.scala }}; project agent-kafka; graalvm-native-image / packageBin'
+        run: sbt --client '++${{ matrix.scala }}; project agent-kafka; graalvm-native-image:packageBin'
 
       - name: Build Docker image for `trace4cats-agent-kafka`
         run: |
@@ -187,7 +182,7 @@ jobs:
           fi
 
       - name: Build native image for `trace4cats-collector-lite`
-        run: sbt --client '++${{ matrix.scala }}; project collector-lite; graalvm-native-image / packageBin'
+        run: sbt --client '++${{ matrix.scala }}; project collector-lite; graalvm-native-image:packageBin'
 
       - name: Build Docker image for `trace4cats-collector-lite`
         run: |
@@ -209,7 +204,7 @@ jobs:
           fi
 
       - name: Build Docker image for `trace4cats-collector`
-        run: 'sbt --client ''++${{ matrix.scala }}; project collector; set ThisBuild / version := "latest"; docker / publishLocal'''
+        run: 'sbt --client ''++${{ matrix.scala }}; project collector; set ThisBuild / version := "latest"; docker:publishLocal'''
 
       - name: Push Docker image for `trace4cats-collector`
         run: |
@@ -226,3 +221,4 @@ jobs:
 
 #todo: tag collector as GITHUBRUN
 #todo: setup java as graal and then install native image
+#todo: proper sbt1.x syntax
