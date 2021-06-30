@@ -136,11 +136,11 @@ jobs:
 
       - name: Compute ver
         run: |
-          sbt --client --no-colors 'inspect actual root / version'
-          sbt --client --no-colors 'inspect actual root / version' | grep "Setting: java.lang.String" | cut -d '=' -f2 | tr -d ' '
+          sbt -Dsbt.log.noformat=true --client 'inspect actual root / version'
+          sbt -Dsbt.log.noformat=true --client 'inspect actual root / version' | grep "Setting: java.lang.String" | cut -d '=' -f2 | tr -d ' '
 
       - name: Export RELEASE_VERSION
-        run: 'echo "RELEASE_VERSION=$(sbt --client --error ''print version'' | tail -n 2 | head -n 1 |  sed ''s/^[[:blank:]]*//;s/[[:blank:]]*$//'')" >> $GITHUB_ENV'
+        run: 'echo "RELEASE_VERSION=$(sbt -Dsbt.log.noformat=true --client ''inspect actual root / version'' | grep "Setting: java.lang.String" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
 
       - name: Build native image for `trace4cats-agent`
         run: sbt --client '++${{ matrix.scala }}; project agent; graalvm-native-image / packageBin'
@@ -223,3 +223,6 @@ jobs:
             docker tag janstenpickle/trace4cats-collector:latest janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
             docker push janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
           fi
+
+#todo: tag collector as GITHUBRUN
+#todo: setup java as graal and then install native image
