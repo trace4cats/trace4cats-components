@@ -33,57 +33,50 @@ ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
 )
 
 ThisBuild / githubWorkflowPublishPostamble ++= {
-  val pre = Seq(
-    WorkflowStep.Run(
+  val common = Seq(
+    WorkflowStep.Use(
+      ref = UseRef.Public("docker", "login-action", "v1"),
       name = Some("Login to Dockerhub"),
-      commands = List("docker login -u janstenpickle -p '${{ secrets.DOCKERHUB }}'")
-    ),
-    WorkflowStep.Run(
-      name = Some("Compute ver"),
-      commands = List(
-        "sbt --client --no-colors 'inspect actual root / version'",
-        "sbt --client --no-colors 'inspect actual root / version' | grep \"Setting: java.lang.String\" | cut -d '=' -f2 | tr -d ' '"
-      )
+      params = Map("username" -> "janstenpickle", "password" -> "${{ secrets.DOCKERHUB }}")
     ),
     WorkflowStep.ComputeVar(
       name = "RELEASE_VERSION",
-      cmd = "sbt --client --error 'print version' | tail -n 2 | head -n 1 |  sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//'"
+      cmd =
+        "sbt -Dsbt.log.noformat=true --client 'inspect actual version' | grep \"Setting: java.lang.String\" | cut -d '=' -f2 | tr -d ' '"
     )
   )
 
-  def perModule(module: String, nativeImage: Boolean): Seq[WorkflowStep] = {
-    val imgName = s"trace4cats-$module"
+  def perModule(module: String, nativeImage: Boolean) = {
+    val name = s"trace4cats-$module"
 
     val buildImg =
       if (nativeImage)
         Seq(
           WorkflowStep.Sbt(
-            name = Some(s"Build native image for `$imgName`"),
-            commands = List(s"project $module", "graalvm-native-image / packageBin")
+            name = Some(s"Build GraalVM native image for '$name'"),
+            commands = List(s"project $module", "GraalVMNativeImage / packageBin")
           ),
           WorkflowStep.Run(
-            name = Some(s"Build Docker image for `$imgName`"),
+            name = Some(s"Build Docker image for '$name'"),
             commands = List(s"pushd modules/$module/src/main/docker", "sh build.sh", "popd")
           )
         )
       else
         Seq(
           WorkflowStep.Sbt(
-            name = Some(s"Build Docker image for `$imgName`"),
-            commands = List(s"project $module", "set ThisBuild / version := \"latest\"", "docker / publishLocal")
+            name = Some(s"Build Docker image for '$name'"),
+            commands =
+              List(s"project $module", "set ThisBuild / version := \"$GITHUB_RUN_NUMBER\"", "Docker / publishLocal")
           )
         )
 
     val pushImg = Seq(
       WorkflowStep.Run(
-        name = Some(s"Push Docker image for `$imgName`"),
+        name = Some(s"Push Docker images for '$name'"),
         commands = List(
-          if (nativeImage)
-            s"docker tag janstenpickle/$imgName:$$GITHUB_RUN_NUMBER janstenpickle/$imgName:latest"
-          else
-            s"docker tag janstenpickle/$imgName:latest janstenpickle/$imgName:$$GITHUB_RUN_NUMBER",
-          s"docker push janstenpickle/$imgName:$$GITHUB_RUN_NUMBER",
-          s"docker push janstenpickle/$imgName:latest"
+          s"docker tag janstenpickle/$name:$$GITHUB_RUN_NUMBER janstenpickle/$name:latest",
+          s"docker push janstenpickle/$name:$$GITHUB_RUN_NUMBER",
+          s"docker push janstenpickle/$name:latest"
         )
       )
     )
@@ -91,11 +84,11 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
     val pushVersionedImg =
       Seq(
         WorkflowStep.Run(
-          name = Some(s"Push versioned Docker image for `$imgName`"),
+          name = Some(s"Push versioned Docker image for '$name'"),
           commands = List(
             """if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then""",
-            s"  docker tag janstenpickle/$imgName:latest janstenpickle/$imgName:$${{ env.RELEASE_VERSION }}",
-            s"  docker push janstenpickle/$imgName:$${{ env.RELEASE_VERSION }}",
+            s"  docker tag janstenpickle/$name:$$GITHUB_RUN_NUMBER janstenpickle/$name:$${{ env.RELEASE_VERSION }}",
+            s"  docker push janstenpickle/$name:$${{ env.RELEASE_VERSION }}",
             "fi"
           )
         )
@@ -104,8 +97,8 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
     buildImg ++ pushImg ++ pushVersionedImg
   }
 
-  pre ++ Seq("agent" -> true, "agent-kafka" -> true, "collector-lite" -> true, "collector" -> false)
-    .flatMap { case (module, isNative) => perModule(module, isNative) }
+  common ++ Seq("agent" -> true, "agent-kafka" -> true, "collector-lite" -> true, "collector" -> false)
+    .flatMap((perModule _).tupled)
 }
 ThisBuild / publishTo := sonatypePublishToBundle.value
 ThisBuild / versionScheme := Some("early-semver")
