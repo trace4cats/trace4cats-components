@@ -27,12 +27,16 @@ ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
 )
 
 ThisBuild / githubWorkflowPublishPostamble ++= {
+  val dockerhubUsername = "janstenpickle"
+  val githubRunNumber = "${{ github.run_number }}"
+  val releaseVersion = "${{ env.RELEASE_VERSION }}"
+
   val common = Seq(
     WorkflowStep.Use(ref = UseRef.Public("docker", "setup-buildx-action", "v1"), name = Some("Set up Docker Buildx")),
     WorkflowStep.Use(
       ref = UseRef.Public("docker", "login-action", "v1"),
       name = Some("Login to Dockerhub"),
-      params = Map("username" -> "janstenpickle", "password" -> "${{ secrets.DOCKERHUB }}")
+      params = Map("username" -> dockerhubUsername, "password" -> "${{ secrets.DOCKERHUB }}")
     ),
     WorkflowStep.ComputeVar(
       name = "RELEASE_VERSION",
@@ -42,71 +46,60 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
   )
 
   def perModule(module: String, isNativeImage: Boolean) = {
-    val name = s"trace4cats-$module"
+    val imageName = s"$dockerhubUsername/trace4cats-$module"
 
-    val buildImg =
+    val buildImage =
       if (isNativeImage)
         Seq(
           WorkflowStep.Sbt(
-            name = Some(s"Build GraalVM native image for '$name'"),
+            name = Some(s"Build GraalVM native image for '$module'"),
             commands = List(s"project $module", "nativeImage")
-          ),
-          WorkflowStep.Run(
-            name = Some(s"Build Docker image for '$name'"),
-            commands = {
-              val dockerfile = s"modules/$module/src/main/docker/Dockerfile"
-              val tag = s"janstenpickle/$name:$${{ github.run_number }}"
-              val path = s"modules/$module/target/native-image"
-              List(s"docker build -f $dockerfile -t $tag $path")
-            }
           ),
           WorkflowStep.Use(
             ref = UseRef.Public("docker", "build-push-action", "v2"),
-            name = Some(s"Build Docker image for '$name' (alt)"),
+            name = Some(s"Build Docker image for '$module'"),
             params = Map(
               "file" -> s"modules/$module/src/main/docker/Dockerfile",
               "context" -> s"modules/$module/target/native-image",
-              "tags" -> s"janstenpickle/$name:$${{ github.run_number }}"
+              "tags" -> s"$imageName:$githubRunNumber",
+              "push" -> "false"
             )
           )
         )
       else
         Seq(
           WorkflowStep.Sbt(
-            name = Some(s"Build Docker image for '$name'"),
-            commands = List(
-              s"project $module",
-              "set ThisBuild / version := \"${{ github.run_number }}\"",
-              "Docker / publishLocal"
-            )
+            name = Some(s"Build Docker image for '$module'"),
+            commands =
+              List(s"project $module", s"""set ThisBuild / version := "$githubRunNumber"""", "Docker / publishLocal")
           )
         )
 
-    val pushImg = Seq(
+    val pushImage = Seq(
       WorkflowStep.Run(
-        name = Some(s"Push Docker images for '$name'"),
+        name = Some(s"Push Docker images for '$module'"),
         commands = List(
-          s"docker tag janstenpickle/$name:$${{ github.run_number }} janstenpickle/$name:latest",
-          s"docker push janstenpickle/$name:$${{ github.run_number }}",
-          s"docker push janstenpickle/$name:latest"
+          s"docker tag $imageName:$githubRunNumber $imageName:latest",
+          s"docker push $imageName:$githubRunNumber",
+          s"docker push $imageName:latest"
         )
       )
     )
 
-    val pushVersionedImg =
+    val pushVersionedImage =
       Seq(
         WorkflowStep.Run(
-          name = Some(s"Push versioned Docker image for '$name'"),
+          name = Some(s"Push versioned Docker image for '$module'"),
           commands = List(
-            """if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then""",
-            s"  docker tag janstenpickle/$name:$${{ github.run_number }} janstenpickle/$name:$${{ env.RELEASE_VERSION }}",
-            s"  docker push janstenpickle/$name:$${{ env.RELEASE_VERSION }}",
+            s"""if [[ "$releaseVersion" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z-]+)?$$ ]]; then""",
+            s"  docker tag $imageName:$githubRunNumber $imageName:$releaseVersion",
+            s"  docker push $imageName:$releaseVersion",
             "fi"
           )
         )
       )
 
-    buildImg ++ pushImg ++ pushVersionedImg
+    buildImage ++ pushImage ++ pushVersionedImage
   }
 
   common ++ Seq("agent" -> true, "agent-kafka" -> true, "collector-lite" -> true, "collector" -> false)
