@@ -62,7 +62,8 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
               "file" -> s"modules/$module/src/main/docker/Dockerfile",
               "context" -> s"modules/$module/target/native-image",
               "tags" -> s"$imageName:$githubRunNumber",
-              "push" -> "false"
+              "push" -> "false",
+              "load" -> "true"
             )
           )
         )

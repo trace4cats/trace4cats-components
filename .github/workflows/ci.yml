@@ -145,6 +145,7 @@ jobs:
           context: modules/agent/target/native-image
           tags: 'janstenpickle/trace4cats-agent:${{ github.run_number }}'
           push: false
+          load: true
 
       - name: Push Docker images for 'agent'
         run: |
@@ -169,6 +170,7 @@ jobs:
           context: modules/agent-kafka/target/native-image
           tags: 'janstenpickle/trace4cats-agent-kafka:${{ github.run_number }}'
           push: false
+          load: true
 
       - name: Push Docker images for 'agent-kafka'
         run: |
@@ -193,6 +195,7 @@ jobs:
           context: modules/collector-lite/target/native-image
           tags: 'janstenpickle/trace4cats-collector-lite:${{ github.run_number }}'
           push: false
+          load: true
 
       - name: Push Docker images for 'collector-lite'
         run: |
