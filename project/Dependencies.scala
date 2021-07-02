@@ -2,16 +2,20 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    val trace4cats = "0.12.0-RC1"
+    val trace4cats = "0.12.0-RC1+146-d193db1e"
 
     val circe = "0.14.1"
     val circeYaml = "0.13.1"
     val decline = "2.0.0"
-    val http4sJdkClient = "0.5.0-RC1"
+    val graalKafkaClient = "0.1.0"
     val grpc = "1.38.0"
+    val http4sJdkClient = "0.5.0-RC1"
     val log4cats = "2.1.1"
     val logback = "1.2.3"
     val scala213 = "2.13.6"
+
+    val kindProjector = "0.13.0"
+    val betterMonadicFor = "0.3.1"
   }
 
   lazy val trace4catsModel = "io.janstenpickle"             %% "trace4cats-model"               % Versions.trace4cats
@@ -22,7 +26,6 @@ object Dependencies {
   lazy val trace4catsExporterCommon = "io.janstenpickle"    %% "trace4cats-exporter-common"     % Versions.trace4cats
   lazy val trace4catsMeta = "io.janstenpickle"              %% "trace4cats-meta"                % Versions.trace4cats
   lazy val trace4catsRateSampling = "io.janstenpickle"      %% "trace4cats-rate-sampling"       % Versions.trace4cats
-  lazy val trace4catsGraalKafka = "io.janstenpickle"        %% "trace4cats-graal-kafka"         % Versions.trace4cats
   lazy val trace4catsLogExporter =
     "io.janstenpickle" %% "trace4cats-log-exporter" % Versions.trace4cats
   lazy val trace4catsDatadogHttpExporter =
@@ -49,12 +52,15 @@ object Dependencies {
     "io.janstenpickle"                              %% "trace4cats-tail-sampling-redis-store" % Versions.trace4cats
   lazy val trace4catsFiltering = "io.janstenpickle" %% "trace4cats-filtering"                 % Versions.trace4cats
 
-  lazy val circeGeneric = "io.circe"      %% "circe-generic-extras"   % Versions.circe
-  lazy val circeYaml = "io.circe"         %% "circe-yaml"             % Versions.circeYaml
-  lazy val declineEffect = "com.monovore" %% "decline-effect"         % Versions.decline
-  lazy val http4sJdkClient = "org.http4s" %% "http4s-jdk-http-client" % Versions.http4sJdkClient
-  lazy val grpcOkHttp = "io.grpc"          % "grpc-okhttp"            % Versions.grpc
-  lazy val log4cats = "org.typelevel"     %% "log4cats-slf4j"         % Versions.log4cats
-  lazy val logback = "ch.qos.logback"      % "logback-classic"        % Versions.logback
+  lazy val circeGeneric = "io.circe"            %% "circe-generic-extras"   % Versions.circe
+  lazy val circeYaml = "io.circe"               %% "circe-yaml"             % Versions.circeYaml
+  lazy val declineEffect = "com.monovore"       %% "decline-effect"         % Versions.decline
+  lazy val graalKafkaClient = "io.janstenpickle" % "graal-kafka-client"     % Versions.graalKafkaClient
+  lazy val grpcOkHttp = "io.grpc"                % "grpc-okhttp"            % Versions.grpc
+  lazy val http4sJdkClient = "org.http4s"       %% "http4s-jdk-http-client" % Versions.http4sJdkClient
+  lazy val log4cats = "org.typelevel"           %% "log4cats-slf4j"         % Versions.log4cats
+  lazy val logback = "ch.qos.logback"            % "logback-classic"        % Versions.logback
 
+  lazy val kindProjector = ("org.typelevel" % "kind-projector"     % Versions.kindProjector).cross(CrossVersion.full)
+  lazy val betterMonadicFor = "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
 }
