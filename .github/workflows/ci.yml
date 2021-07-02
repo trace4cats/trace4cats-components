@@ -123,6 +123,9 @@ jobs:
 #          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
 #        run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Login to Dockerhub
         uses: docker/login-action@v1
         with:
@@ -136,10 +139,14 @@ jobs:
         run: sbt --client '++${{ matrix.scala }}; project agent; nativeImage'
 
       - name: Build Docker image for 'trace4cats-agent'
-        run: |
-          pushd modules/agent/src/main/docker
-          sh build.sh
-          popd
+        run: 'docker build -f modules/agent/src/main/docker/Dockerfile -t janstenpickle/trace4cats-agent:${{ github.run_number }} modules/agent/target/native-image'
+
+      - name: Build Docker image for 'trace4cats-agent' (alt)
+        uses: docker/build-push-action@v2
+        with:
+          file: modules/agent/src/main/docker/Dockerfile
+          context: modules/agent/target/native-image
+          tags: 'janstenpickle/trace4cats-agent:${{ github.run_number }}'
 
       - name: Push Docker images for 'trace4cats-agent'
         run: |
@@ -158,10 +165,14 @@ jobs:
         run: sbt --client '++${{ matrix.scala }}; project agent-kafka; nativeImage'
 
       - name: Build Docker image for 'trace4cats-agent-kafka'
-        run: |
-          pushd modules/agent-kafka/src/main/docker
-          sh build.sh
-          popd
+        run: 'docker build -f modules/agent-kafka/src/main/docker/Dockerfile -t janstenpickle/trace4cats-agent-kafka:${{ github.run_number }} modules/agent-kafka/target/native-image'
+
+      - name: Build Docker image for 'trace4cats-agent-kafka' (alt)
+        uses: docker/build-push-action@v2
+        with:
+          file: modules/agent-kafka/src/main/docker/Dockerfile
+          context: modules/agent-kafka/target/native-image
+          tags: 'janstenpickle/trace4cats-agent-kafka:${{ github.run_number }}'
 
       - name: Push Docker images for 'trace4cats-agent-kafka'
         run: |
@@ -180,10 +191,14 @@ jobs:
         run: sbt --client '++${{ matrix.scala }}; project collector-lite; nativeImage'
 
       - name: Build Docker image for 'trace4cats-collector-lite'
-        run: |
-          pushd modules/collector-lite/src/main/docker
-          sh build.sh
-          popd
+        run: 'docker build -f modules/collector-lite/src/main/docker/Dockerfile -t janstenpickle/trace4cats-collector-lite:${{ github.run_number }} modules/collector-lite/target/native-image'
+
+      - name: Build Docker image for 'trace4cats-collector-lite' (alt)
+        uses: docker/build-push-action@v2
+        with:
+          file: modules/collector-lite/src/main/docker/Dockerfile
+          context: modules/collector-lite/target/native-image
+          tags: 'janstenpickle/trace4cats-collector-lite:${{ github.run_number }}'
 
       - name: Push Docker images for 'trace4cats-collector-lite'
         run: |

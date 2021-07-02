@@ -28,6 +28,7 @@ ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
 
 ThisBuild / githubWorkflowPublishPostamble ++= {
   val common = Seq(
+    WorkflowStep.Use(ref = UseRef.Public("docker", "setup-buildx-action", "v1"), name = Some("Set up Docker Buildx")),
     WorkflowStep.Use(
       ref = UseRef.Public("docker", "login-action", "v1"),
       name = Some("Login to Dockerhub"),
@@ -52,7 +53,21 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
           ),
           WorkflowStep.Run(
             name = Some(s"Build Docker image for '$name'"),
-            commands = List(s"pushd modules/$module/src/main/docker", "sh build.sh", "popd")
+            commands = {
+              val dockerfile = s"modules/$module/src/main/docker/Dockerfile"
+              val tag = s"janstenpickle/$name:$${{ github.run_number }}"
+              val path = s"modules/$module/target/native-image"
+              List(s"docker build -f $dockerfile -t $tag $path")
+            }
+          ),
+          WorkflowStep.Use(
+            ref = UseRef.Public("docker", "build-push-action", "v2"),
+            name = Some(s"Build Docker image for '$name' (alt)"),
+            params = Map(
+              "file" -> s"modules/$module/src/main/docker/Dockerfile",
+              "context" -> s"modules/$module/target/native-image",
+              "tags" -> s"janstenpickle/$name:$${{ github.run_number }}"
+            )
           )
         )
       else
