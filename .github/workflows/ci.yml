@@ -52,8 +52,8 @@ jobs:
       - name: Check formatting
         run: sbt --client '++${{ matrix.scala }}; scalafmtCheckAll; scalafmtSbtCheck'
 
-#      - name: Check that workflows are up to date
-#        run: sbt --client '++${{ matrix.scala }}; githubWorkflowCheck'
+      - name: Check that workflows are up to date
+        run: sbt --client '++${{ matrix.scala }}; githubWorkflowCheck'
 
       - name: Build project
         run: sbt --client '++${{ matrix.scala }}; test'
@@ -70,7 +70,7 @@ jobs:
   publish:
     name: Publish Artifacts
     needs: [build]
-#    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master') && (github.actor != 'mergify[bot]')
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master') && (github.actor != 'mergify[bot]')
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -117,11 +117,11 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PGP_PASS }}
 
-#      - name: Publish artifacts
-#        env:
-#          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-#          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-#        run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
+      - name: Publish artifacts
+        env:
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        run: sbt --client '++${{ matrix.scala }}; ciReleaseSonatype'
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -141,11 +141,11 @@ jobs:
       - name: Build Docker image for 'agent'
         uses: docker/build-push-action@v2
         with:
-          file: modules/agent/src/main/docker/Dockerfile
-          context: modules/agent/target/native-image
           tags: 'janstenpickle/trace4cats-agent:${{ github.run_number }}'
+          context: modules/agent/target/native-image
           push: false
           load: true
+          file: modules/agent/src/main/docker/Dockerfile
 
       - name: Push Docker images for 'agent'
         run: |
@@ -166,11 +166,11 @@ jobs:
       - name: Build Docker image for 'agent-kafka'
         uses: docker/build-push-action@v2
         with:
-          file: modules/agent-kafka/src/main/docker/Dockerfile
-          context: modules/agent-kafka/target/native-image
           tags: 'janstenpickle/trace4cats-agent-kafka:${{ github.run_number }}'
+          context: modules/agent-kafka/target/native-image
           push: false
           load: true
+          file: modules/agent-kafka/src/main/docker/Dockerfile
 
       - name: Push Docker images for 'agent-kafka'
         run: |
@@ -191,11 +191,11 @@ jobs:
       - name: Build Docker image for 'collector-lite'
         uses: docker/build-push-action@v2
         with:
-          file: modules/collector-lite/src/main/docker/Dockerfile
-          context: modules/collector-lite/target/native-image
           tags: 'janstenpickle/trace4cats-collector-lite:${{ github.run_number }}'
+          context: modules/collector-lite/target/native-image
           push: false
           load: true
+          file: modules/collector-lite/src/main/docker/Dockerfile
 
       - name: Push Docker images for 'collector-lite'
         run: |
