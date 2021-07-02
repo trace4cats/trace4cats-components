@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    val trace4cats = "0.12.0-RC1+146-d193db1e"
+    val trace4cats = "0.12.0-RC1+148-ffc89c33"
 
     val circe = "0.14.1"
     val circeYaml = "0.14.0"
