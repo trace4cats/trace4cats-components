@@ -23,11 +23,7 @@ pull_request_rules:
                   - files=project/plugins.sbt
           - body~=labels:.*semver-patch
           - "#approved-reviews-by>=1"
-      - and:
-          - check-success~=Test \(ubuntu-latest, 2\.12\.\d+, adopt@1\.8\)
-          - check-success~=Test \(ubuntu-latest, 2\.12\.\d+, adopt@1\.11\)
-          - check-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.8\)
-          - check-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
+      - check-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
     actions:
       merge:
         method: rebase
@@ -40,11 +36,7 @@ pull_request_rules:
       - and:
           - label=skip-release
           - label=ready-to-merge
-      - and:
-          - check-success~=Test \(ubuntu-latest, 2\.12\.\d+, adopt@1\.8\)
-          - check-success~=Test \(ubuntu-latest, 2\.12\.\d+, adopt@1\.11\)
-          - check-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.8\)
-          - check-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
+      - check-success~=Test \(ubuntu-latest, 2\.13\.\d+, adopt@1\.11\)
     actions:
       merge:
         method: rebase
