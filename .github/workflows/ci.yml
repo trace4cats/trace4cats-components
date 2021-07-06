@@ -135,6 +135,16 @@ jobs:
       - name: Export RELEASE_VERSION
         run: 'echo "RELEASE_VERSION=$(sbt -Dsbt.log.noformat=true --client ''inspect actual version'' | grep "Setting: java.lang.String" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
 
+      - name: Check RELEASE_VERSION
+        id: release-version-regex-check
+        uses: actions-ecosystem/action-regex-match@v2
+        with:
+          text: ${{ env.RELEASE_VERSION }}
+          regex: ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$
+
+      - name: Export IS_TAGGED_RELEASE
+        run: echo "IS_TAGGED_RELEASE=$(echo ${{ steps.release-version-regex-check.outputs.match != '' }})" >> $GITHUB_ENV
+
       - name: Build GraalVM native image for 'agent'
         run: sbt --client '++${{ matrix.scala }}; project agent; nativeImage'
 
@@ -154,11 +164,10 @@ jobs:
           docker push janstenpickle/trace4cats-agent:latest
 
       - name: Push versioned Docker image for 'agent'
+        if: env.IS_TAGGED_RELEASE
         run: |
-          if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-agent:${{ github.run_number }} janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
-            docker push janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
-          fi
+          docker tag janstenpickle/trace4cats-agent:${{ github.run_number }} janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
 
       - name: Build GraalVM native image for 'agent-kafka'
         run: sbt --client '++${{ matrix.scala }}; project agent-kafka; nativeImage'
@@ -179,11 +188,10 @@ jobs:
           docker push janstenpickle/trace4cats-agent-kafka:latest
 
       - name: Push versioned Docker image for 'agent-kafka'
+        if: env.IS_TAGGED_RELEASE
         run: |
-          if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-agent-kafka:${{ github.run_number }} janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
-            docker push janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
-          fi
+          docker tag janstenpickle/trace4cats-agent-kafka:${{ github.run_number }} janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
 
       - name: Build GraalVM native image for 'collector-lite'
         run: sbt --client '++${{ matrix.scala }}; project collector-lite; nativeImage'
@@ -204,11 +212,10 @@ jobs:
           docker push janstenpickle/trace4cats-collector-lite:latest
 
       - name: Push versioned Docker image for 'collector-lite'
+        if: env.IS_TAGGED_RELEASE
         run: |
-          if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-collector-lite:${{ github.run_number }} janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
-            docker push janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
-          fi
+          docker tag janstenpickle/trace4cats-collector-lite:${{ github.run_number }} janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
 
       - name: Build Docker image for 'collector'
         run: 'sbt --client ''++${{ matrix.scala }}; project collector; set ThisBuild / version := "${{ github.run_number }}"; Docker / publishLocal'''
@@ -220,8 +227,7 @@ jobs:
           docker push janstenpickle/trace4cats-collector:latest
 
       - name: Push versioned Docker image for 'collector'
+        if: env.IS_TAGGED_RELEASE
         run: |
-          if [[ "${{ env.RELEASE_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+)?$ ]]; then
-            docker tag janstenpickle/trace4cats-collector:${{ github.run_number }} janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
-            docker push janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
-          fi
+          docker tag janstenpickle/trace4cats-collector:${{ github.run_number }} janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}

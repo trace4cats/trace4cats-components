@@ -42,7 +42,15 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
       name = "RELEASE_VERSION",
       cmd =
         "sbt -Dsbt.log.noformat=true --client 'inspect actual version' | grep \"Setting: java.lang.String\" | cut -d '=' -f2 | tr -d ' '"
-    )
+    ),
+    WorkflowStep.Use(
+      ref = UseRef.Public("actions-ecosystem", "action-regex-match", "v2"),
+      name = Some("Check RELEASE_VERSION"),
+      id = Some("release-version-regex-check"),
+      params = Map("text" -> releaseVersion, "regex" -> "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z-]+)?$")
+    ),
+    WorkflowStep
+      .ComputeVar(name = "IS_TAGGED_RELEASE", cmd = "echo ${{ steps.release-version-regex-check.outputs.match != '' }}")
   )
 
   def perModule(module: String, isNativeImage: Boolean) = {
@@ -91,11 +99,10 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
       Seq(
         WorkflowStep.Run(
           name = Some(s"Push versioned Docker image for '$module'"),
+          cond = Some("env.IS_TAGGED_RELEASE"),
           commands = List(
-            s"""if [[ "$releaseVersion" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z-]+)?$$ ]]; then""",
-            s"  docker tag $imageName:$githubRunNumber $imageName:$releaseVersion",
-            s"  docker push $imageName:$releaseVersion",
-            "fi"
+            s"docker tag $imageName:$githubRunNumber $imageName:$releaseVersion",
+            s"docker push $imageName:$releaseVersion"
           )
         )
       )
