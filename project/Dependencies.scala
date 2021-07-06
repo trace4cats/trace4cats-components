@@ -3,6 +3,15 @@ import sbt._
 object Dependencies {
   object Versions {
     val trace4cats = "0.12.0-RC2"
+    val trace4catsAvro = "0.12.0-RC2"
+    val trace4catsAvroKafka = "0.12.0-RC2"
+    val trace4catsDatadog = "0.12.0-RC2"
+    val trace4catsJaeger = "0.12.0-RC2"
+    val trace4catsOpentelemetry = "0.12.0-RC2"
+    val trace4catsCloudtrace = "0.12.0-RC2"
+    val trace4catsNewrelic = "0.12.0-RC2"
+    val trace4catsZipkin = "0.12.0-RC2"
+    val trace4catsTailSamplingExtras = "0.12.0-RC2"
 
     val circe = "0.14.1"
     val circeYaml = "0.14.0"
@@ -18,39 +27,42 @@ object Dependencies {
     val betterMonadicFor = "0.3.1"
   }
 
-  lazy val trace4catsModel = "io.janstenpickle"             %% "trace4cats-model"               % Versions.trace4cats
-  lazy val trace4catsAvroExporter = "io.janstenpickle"      %% "trace4cats-avro-exporter"       % Versions.trace4cats
-  lazy val trace4catsAvroKafkaConsumer = "io.janstenpickle" %% "trace4cats-avro-kafka-consumer" % Versions.trace4cats
-  lazy val trace4catsAvroKafkaExporter = "io.janstenpickle" %% "trace4cats-avro-kafka-exporter" % Versions.trace4cats
-  lazy val trace4catsAvroServer = "io.janstenpickle"        %% "trace4cats-avro-server"         % Versions.trace4cats
-  lazy val trace4catsExporterCommon = "io.janstenpickle"    %% "trace4cats-exporter-common"     % Versions.trace4cats
-  lazy val trace4catsMeta = "io.janstenpickle"              %% "trace4cats-meta"                % Versions.trace4cats
-  lazy val trace4catsRateSampling = "io.janstenpickle"      %% "trace4cats-rate-sampling"       % Versions.trace4cats
-  lazy val trace4catsLogExporter =
-    "io.janstenpickle" %% "trace4cats-log-exporter" % Versions.trace4cats
+  lazy val trace4catsModel = "io.janstenpickle"          %% "trace4cats-model"           % Versions.trace4cats
+  lazy val trace4catsExporterCommon = "io.janstenpickle" %% "trace4cats-exporter-common" % Versions.trace4cats
+  lazy val trace4catsMeta = "io.janstenpickle"           %% "trace4cats-meta"            % Versions.trace4cats
+  lazy val trace4catsRateSampling = "io.janstenpickle"   %% "trace4cats-rate-sampling"   % Versions.trace4cats
+  lazy val trace4catsFiltering = "io.janstenpickle"      %% "trace4cats-filtering"       % Versions.trace4cats
+  lazy val trace4catsLogExporter = "io.janstenpickle"    %% "trace4cats-log-exporter"    % Versions.trace4cats
+  lazy val trace4catsTailSampling = "io.janstenpickle"   %% "trace4cats-tail-sampling"   % Versions.trace4cats
+
+  lazy val trace4catsAvroExporter = "io.janstenpickle" %% "trace4cats-avro-exporter" % Versions.trace4catsAvro
+  lazy val trace4catsAvroServer = "io.janstenpickle"   %% "trace4cats-avro-server"   % Versions.trace4catsAvro
+  lazy val trace4catsAvroKafkaConsumer =
+    "io.janstenpickle" %% "trace4cats-avro-kafka-consumer" % Versions.trace4catsAvroKafka
+  lazy val trace4catsAvroKafkaExporter =
+    "io.janstenpickle" %% "trace4cats-avro-kafka-exporter" % Versions.trace4catsAvroKafka
   lazy val trace4catsDatadogHttpExporter =
-    "io.janstenpickle" %% "trace4cats-datadog-http-exporter" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-datadog-http-exporter" % Versions.trace4catsDatadog
   lazy val trace4catsJaegerThriftExporter =
-    "io.janstenpickle" %% "trace4cats-jaeger-thrift-exporter" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-jaeger-thrift-exporter" % Versions.trace4catsJaeger
   lazy val trace4catsOpentelemetryOltpGrpcExporter =
-    "io.janstenpickle" %% "trace4cats-opentelemetry-otlp-grpc-exporter" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-opentelemetry-otlp-grpc-exporter" % Versions.trace4catsOpentelemetry
   lazy val trace4catsOpentelemetryOltpHttpExporter =
-    "io.janstenpickle" %% "trace4cats-opentelemetry-otlp-http-exporter" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-opentelemetry-otlp-http-exporter" % Versions.trace4catsOpentelemetry
   lazy val trace4catsOpentelemetryJaegerExporter =
-    "io.janstenpickle" %% "trace4cats-opentelemetry-jaeger-exporter" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-opentelemetry-jaeger-exporter" % Versions.trace4catsOpentelemetry
   lazy val trace4catsStackdriverGrpcExporter =
-    "io.janstenpickle" %% "trace4cats-stackdriver-grpc-exporter" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-stackdriver-grpc-exporter" % Versions.trace4catsCloudtrace
   lazy val trace4catsStackdriverHttpExporter =
-    "io.janstenpickle" %% "trace4cats-stackdriver-http-exporter" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-stackdriver-http-exporter" % Versions.trace4catsCloudtrace
   lazy val trace4catsNewrelicHttpExporter =
-    "io.janstenpickle"                                       %% "trace4cats-newrelic-http-exporter" % Versions.trace4cats
-  lazy val trace4catsZipkinHttpExporter = "io.janstenpickle" %% "trace4cats-zipkin-http-exporter"   % Versions.trace4cats
-  lazy val trace4catsTailSampling = "io.janstenpickle"       %% "trace4cats-tail-sampling"          % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-newrelic-http-exporter" % Versions.trace4catsNewrelic
+  lazy val trace4catsZipkinHttpExporter =
+    "io.janstenpickle" %% "trace4cats-zipkin-http-exporter" % Versions.trace4catsZipkin
   lazy val trace4catsTailSamplingCacheStore =
-    "io.janstenpickle" %% "trace4cats-tail-sampling-cache-store" % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-tail-sampling-cache-store" % Versions.trace4catsTailSamplingExtras
   lazy val trace4catsTailSamplingRedisStore =
-    "io.janstenpickle"                              %% "trace4cats-tail-sampling-redis-store" % Versions.trace4cats
-  lazy val trace4catsFiltering = "io.janstenpickle" %% "trace4cats-filtering"                 % Versions.trace4cats
+    "io.janstenpickle" %% "trace4cats-tail-sampling-redis-store" % Versions.trace4catsTailSamplingExtras
 
   lazy val circeGeneric = "io.circe"            %% "circe-generic-extras"   % Versions.circe
   lazy val circeYaml = "io.circe"               %% "circe-yaml"             % Versions.circeYaml
