@@ -164,7 +164,7 @@ jobs:
           docker push janstenpickle/trace4cats-agent:latest
 
       - name: Push versioned Docker image for 'agent'
-        if: env.IS_TAGGED_RELEASE
+        if: env.IS_TAGGED_RELEASE == 'true'
         run: |
           docker tag janstenpickle/trace4cats-agent:${{ github.run_number }} janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
           docker push janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
@@ -188,7 +188,7 @@ jobs:
           docker push janstenpickle/trace4cats-agent-kafka:latest
 
       - name: Push versioned Docker image for 'agent-kafka'
-        if: env.IS_TAGGED_RELEASE
+        if: env.IS_TAGGED_RELEASE == 'true'
         run: |
           docker tag janstenpickle/trace4cats-agent-kafka:${{ github.run_number }} janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
           docker push janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
@@ -212,7 +212,7 @@ jobs:
           docker push janstenpickle/trace4cats-collector-lite:latest
 
       - name: Push versioned Docker image for 'collector-lite'
-        if: env.IS_TAGGED_RELEASE
+        if: env.IS_TAGGED_RELEASE == 'true'
         run: |
           docker tag janstenpickle/trace4cats-collector-lite:${{ github.run_number }} janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
           docker push janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
@@ -227,7 +227,7 @@ jobs:
           docker push janstenpickle/trace4cats-collector:latest
 
       - name: Push versioned Docker image for 'collector'
-        if: env.IS_TAGGED_RELEASE
+        if: env.IS_TAGGED_RELEASE == 'true'
         run: |
           docker tag janstenpickle/trace4cats-collector:${{ github.run_number }} janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
           docker push janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
