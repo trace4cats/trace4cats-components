@@ -18,7 +18,7 @@ object Dependencies {
     val decline = "2.1.0"
     val graalKafkaClient = "0.1.0"
     val grpc = "1.39.0"
-    val http4sJdkClient = "0.5.0-RC1"
+    val http4sJdkClient = "0.5.0"
     val log4cats = "2.1.1"
     val logback = "1.2.5"
     val scala213 = "2.13.6"
