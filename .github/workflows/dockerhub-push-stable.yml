@@ -1,0 +1,46 @@
+name: Push stable images to Dockerhub
+
+on:
+  workflow_dispatch:
+
+env:
+  TAG: 102
+  RELEASE_VERSION: 0.12.0
+
+jobs:
+  publish:
+    name: Publish Docker images
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Login to Dockerhub
+        uses: docker/login-action@v1
+        with:
+          username: janstenpickle
+          password: ${{ secrets.DOCKERHUB }}
+
+      - name: Push versioned Docker image for 'agent'
+        run: |
+          docker pull janstenpickle/trace4cats-agent:${{ env.TAG }}
+          docker tag janstenpickle/trace4cats-agent:${{ env.TAG }} janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-agent:${{ env.RELEASE_VERSION }}
+
+      - name: Push versioned Docker image for 'agent-kafka'
+        run: |
+          docker pull janstenpickle/trace4cats-agent-kafka:${{ env.TAG }}
+          docker tag janstenpickle/trace4cats-agent-kafka:${{ env.TAG }} janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-agent-kafka:${{ env.RELEASE_VERSION }}
+
+      - name: Push versioned Docker image for 'collector-lite'
+        run: |
+          docker pull janstenpickle/trace4cats-collector-lite:${{ env.TAG }}
+          docker tag janstenpickle/trace4cats-collector-lite:${{ env.TAG }} janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-collector-lite:${{ env.RELEASE_VERSION }}
+
+      - name: Push versioned Docker image for 'collector'
+        run: |
+          docker pull janstenpickle/trace4cats-collector:${{ env.TAG }}
+          docker tag janstenpickle/trace4cats-collector:${{ env.TAG }} janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
+          docker push janstenpickle/trace4cats-collector:${{ env.RELEASE_VERSION }}
