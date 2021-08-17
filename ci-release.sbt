@@ -19,6 +19,7 @@ ThisBuild / githubWorkflowPublish := Seq(
   )
 )
 ThisBuild / githubWorkflowPublishCond := Some("github.actor != 'mergify[bot]'")
+
 ThisBuild / githubWorkflowPublishPreamble += WorkflowStep.Use(
   ref = UseRef.Public("crazy-max", "ghaction-import-gpg", "v3"),
   id = Some("import_gpg"),
@@ -41,12 +42,12 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
     WorkflowStep.ComputeVar(
       name = "RELEASE_VERSION",
       cmd =
-        "sbt -Dsbt.log.noformat=true --client 'inspect actual version' | grep \"Setting: java.lang.String\" | cut -d '=' -f2 | tr -d ' '"
+        "sbt -Dsbt.log.noformat=true 'inspect actual version' | grep \"Setting: java.lang.String\" | cut -d '=' -f2 | tr -d ' '"
     ),
     WorkflowStep.ComputeVar(
       name = "IS_STABLE_RELEASE",
       cmd =
-        "sbt -Dsbt.log.noformat=true --client 'inspect actual isVersionStable' | grep \"Setting: Boolean\" | cut -d '=' -f2 | tr -d ' '"
+        "sbt -Dsbt.log.noformat=true 'inspect actual isVersionStable' | grep \"Setting: Boolean\" | cut -d '=' -f2 | tr -d ' '"
     )
   )
 
@@ -110,6 +111,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
   common ++ Seq("agent" -> true, "agent-kafka" -> true, "collector-lite" -> true, "collector" -> false)
     .flatMap((perModule _).tupled)
 }
+
 ThisBuild / publishTo := sonatypePublishToBundle.value
 ThisBuild / versionScheme := Some("early-semver")
 
