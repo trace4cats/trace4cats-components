@@ -17,7 +17,7 @@ object Dependencies {
     val circeYaml = "0.14.1"
     val decline = "2.2.0"
     val graalKafkaClient = "0.1.0"
-    val grpc = "1.42.1"
+    val grpc = "1.43.0"
     val http4sJdkClient = "0.5.0"
     val log4cats = "2.1.1"
     val logback = "1.2.8"
