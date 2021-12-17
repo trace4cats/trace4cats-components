@@ -20,7 +20,7 @@ object Dependencies {
     val grpc = "1.42.1"
     val http4sJdkClient = "0.5.0"
     val log4cats = "2.1.1"
-    val logback = "1.2.8"
+    val logback = "1.2.9"
     val scala213 = "2.13.7"
 
     val kindProjector = "0.13.2"
