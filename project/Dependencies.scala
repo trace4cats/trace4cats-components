@@ -21,7 +21,7 @@ object Dependencies {
     val http4sJdkClient = "0.5.0"
     val log4cats = "2.1.1"
     val logback = "1.2.10"
-    val scala213 = "2.13.7"
+    val scala213 = "2.13.8"
 
     val kindProjector = "0.13.2"
     val betterMonadicFor = "0.3.1"
