@@ -9,6 +9,9 @@ import io.janstenpickle.trace4cats.avro._
 import io.janstenpickle.trace4cats.newrelic.Endpoint
 import io.circe.generic.extras.semiauto._
 import io.janstenpickle.trace4cats.model.AttributeValue
+import org.http4s.Uri
+
+import scala.util.Success
 
 case class CommonCollectorConfig(
   listener: ListenerConfig = ListenerConfig(),
@@ -92,10 +95,10 @@ object DatadogConfig {
 
 case class NewRelicConfig(apiKey: String, endpoint: Endpoint = Endpoint.US)
 object NewRelicConfig {
-  implicit val endpointDecoder: Decoder[Endpoint] = Decoder.decodeString.map {
-    case "US" => Endpoint.US
-    case "EU" => Endpoint.EU
-    case endpoint => Endpoint.Observer(endpoint)
+  implicit val endpointDecoder: Decoder[Endpoint] = Decoder.decodeString.emapTry {
+    case "US" => Success(Endpoint.US)
+    case "EU" => Success(Endpoint.EU)
+    case endpoint => Uri.fromString(endpoint).toTry.map(Endpoint.Observer(_))
   }
   implicit val decoder: Decoder[NewRelicConfig] = deriveConfiguredDecoder
 }

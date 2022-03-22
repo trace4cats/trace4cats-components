@@ -134,12 +134,15 @@ object CommonCollector {
 
       }
 
-      newRelicExporters <- config.newRelic.traverse { newRelic =>
-        Resource
-          .eval(NewRelicSpanExporter[F, Chunk](client, apiKey = newRelic.apiKey, endpoint = newRelic.endpoint))
-          .map(("NewRelic HTTP", List[(String, AttributeValue)]("newrelic.endpoint" -> newRelic.endpoint.url), _))
-
-      }
+      newRelicExporters <- config.newRelic
+        .map { newRelic =>
+          (
+            "NewRelic HTTP",
+            List[(String, AttributeValue)]("newrelic.endpoint" -> newRelic.endpoint.uri.renderString),
+            NewRelicSpanExporter[F, Chunk](client, apiKey = newRelic.apiKey, endpoint = newRelic.endpoint)
+          )
+        }
+        .pure[Resource[F, *]]
 
       zipkinExporters <- config.zipkin.traverse { zipkin =>
         Resource
