@@ -7,12 +7,10 @@ lazy val commonSettings = Seq(
       case _ => Seq.empty
     }
   },
-  scalacOptions := {
-    val opts = scalacOptions.value
-    val wconf = "-Wconf:any:wv"
+  scalacOptions += {
     CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, _)) => opts :+ wconf
-      case _ => opts
+      case Some((2, _)) => "-Wconf:any:wv"
+      case _ => "-Wconf:any:v"
     }
   },
   Test / fork := true,
