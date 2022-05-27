@@ -62,7 +62,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
             commands = List(s"project $module", "nativeImage")
           ),
           WorkflowStep.Use(
-            ref = UseRef.Public("docker", "build-push-action", "v2"),
+            ref = UseRef.Public("docker", "build-push-action", "v3"),
             name = Some(s"Build Docker image for '$module'"),
             params = Map(
               "file" -> s"modules/$module/src/main/docker/Dockerfile",
