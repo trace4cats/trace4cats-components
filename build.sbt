@@ -82,11 +82,9 @@ lazy val `agent-common` = (project in file("modules/agent-common"))
       Dependencies.declineEffect,
       Dependencies.log4cats,
       Dependencies.logback,
-      Dependencies.trace4catsModel,
       Dependencies.trace4catsAvroServer,
-      Dependencies.trace4catsExporterCommon,
+      Dependencies.trace4catsCore,
       Dependencies.trace4catsMeta,
-      Dependencies.trace4catsRateSampling
     )
   )
 
@@ -117,14 +115,12 @@ lazy val `collector-common` = (project in file("modules/collector-common"))
       Dependencies.declineEffect,
       Dependencies.http4sJdkClient,
       Dependencies.log4cats,
-      Dependencies.trace4catsModel,
-      Dependencies.trace4catsExporterCommon,
+      Dependencies.trace4catsCore,
       Dependencies.trace4catsMeta,
       Dependencies.trace4catsAvroExporter,
       Dependencies.trace4catsAvroServer,
       Dependencies.trace4catsAvroKafkaExporter,
       Dependencies.trace4catsAvroKafkaConsumer,
-      Dependencies.trace4catsLogExporter,
       Dependencies.trace4catsJaegerThriftExporter,
       Dependencies.trace4catsDatadogHttpExporter,
       Dependencies.trace4catsOpentelemetryOltpHttpExporter,
@@ -134,8 +130,6 @@ lazy val `collector-common` = (project in file("modules/collector-common"))
       Dependencies.trace4catsTailSampling,
       Dependencies.trace4catsTailSamplingCacheStore,
       Dependencies.trace4catsTailSamplingRedisStore,
-      Dependencies.trace4catsFiltering,
-      Dependencies.trace4catsRateSampling
     )
   )
 
