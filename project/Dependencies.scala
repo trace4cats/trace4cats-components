@@ -13,8 +13,8 @@ object Dependencies {
     val trace4catsZipkin = "0.13.1+17-1553c1c6"
     val trace4catsTailSamplingExtras = "0.13.1+16-f4b6dc0d"
 
-    val circe = "0.14.1"
-    val circeYaml = "0.14.1"
+    val circe = "0.14.2"
+    val circeYaml = "0.14.2"
     val decline = "2.2.0"
     val graalKafkaClient = "0.1.0"
     val grpc = "1.46.0"
