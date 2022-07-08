@@ -19,7 +19,7 @@ object Dependencies {
     val graalKafkaClient = "0.1.0"
     val grpc = "1.46.0"
     val http4sJdkClient = "0.7.0"
-    val log4cats = "2.3.1"
+    val log4cats = "2.3.2"
     val logback = "1.2.11"
     val scala213 = "2.13.8"
 
