@@ -10,7 +10,7 @@ object Dependencies {
     val trace4catsOpentelemetry = "0.13.1+26-752cf951"
     val trace4catsCloudtrace = "0.13.1+23-2f138f66"
     val trace4catsNewrelic = "0.13.1+18-7e343f59"
-    val trace4catsZipkin = "0.13.1+17-1553c1c6"
+    val trace4catsZipkin = "0.13.1+25-2e16005d"
     val trace4catsTailSamplingExtras = "0.13.1+16-f4b6dc0d"
 
     val circe = "0.14.1"
