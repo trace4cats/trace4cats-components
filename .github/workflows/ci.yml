@@ -140,7 +140,7 @@ jobs:
         run: 'echo "RELEASE_VERSION=$(sbt -Dsbt.log.noformat=true ''inspect actual version'' | grep "Setting: java.lang.String" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
 
       - name: Export IS_STABLE_RELEASE
-        run: 'echo "IS_STABLE_RELEASE=$(sbt -Dsbt.log.noformat=true ''inspect actual isVersionStable'' | grep "Setting: Boolean" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
+        run: echo "IS_STABLE_RELEASE=$(if [[ `echo $RELEASE_VERSION | grep '+'` ]]; then echo false; else echo true; fi)" >> $GITHUB_ENV
 
       - name: Build GraalVM native image for 'agent'
         run: sbt ++${{ matrix.scala }} 'project agent' nativeImage

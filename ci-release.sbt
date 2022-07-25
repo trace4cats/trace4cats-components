@@ -47,7 +47,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
     WorkflowStep.ComputeVar(
       name = "IS_STABLE_RELEASE",
       cmd =
-        "sbt -Dsbt.log.noformat=true 'inspect actual isVersionStable' | grep \"Setting: Boolean\" | cut -d '=' -f2 | tr -d ' '"
+        "if [[ `echo $RELEASE_VERSION | grep '+'` ]]; then echo false; else echo true; fi"
     )
   )
 
