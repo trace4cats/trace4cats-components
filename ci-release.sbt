@@ -46,8 +46,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
     ),
     WorkflowStep.ComputeVar(
       name = "IS_STABLE_RELEASE",
-      cmd =
-        "if [[ `echo $RELEASE_VERSION | grep '+'` ]]; then echo false; else echo true; fi"
+      cmd = "if [[ `echo $RELEASE_VERSION | grep '+'` ]]; then echo false; else echo true; fi"
     )
   )
 
