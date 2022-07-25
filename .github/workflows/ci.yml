@@ -61,7 +61,7 @@ jobs:
         run: sbt ++${{ matrix.scala }} test
 
       - name: Compress target directories
-        run: tar cf targets.tar modules/collector-common/target modules/collector-lite/target modules/collector/target target modules/agent/target modules/agent-common/target modules/agent-kafka/target project/target
+        run: tar cf targets.tar modules/collector-common/target modules/collector-lite/target modules/collector/target target modules/agent/target modules/common/target modules/agent-common/target modules/agent-kafka/target project/target
 
       - name: Upload target directories
         uses: actions/upload-artifact@v2
