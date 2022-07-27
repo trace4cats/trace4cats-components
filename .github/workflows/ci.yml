@@ -61,7 +61,7 @@ jobs:
         run: sbt ++${{ matrix.scala }} test
 
       - name: Compress target directories
-        run: tar cf targets.tar modules/collector-common/target modules/collector-lite/target modules/collector/target target modules/agent/target modules/agent-common/target modules/agent-kafka/target project/target
+        run: tar cf targets.tar modules/collector-common/target modules/collector-lite/target modules/collector/target target modules/agent/target modules/common/target modules/agent-common/target modules/agent-kafka/target project/target
 
       - name: Upload target directories
         uses: actions/upload-artifact@v2
@@ -140,7 +140,7 @@ jobs:
         run: 'echo "RELEASE_VERSION=$(sbt -Dsbt.log.noformat=true ''inspect actual version'' | grep "Setting: java.lang.String" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
 
       - name: Export IS_STABLE_RELEASE
-        run: 'echo "IS_STABLE_RELEASE=$(sbt -Dsbt.log.noformat=true ''inspect actual isVersionStable'' | grep "Setting: Boolean" | cut -d ''='' -f2 | tr -d '' '')" >> $GITHUB_ENV'
+        run: echo "IS_STABLE_RELEASE=$(if [[ `echo $RELEASE_VERSION | grep '+'` ]]; then echo false; else echo true; fi)" >> $GITHUB_ENV
 
       - name: Build GraalVM native image for 'agent'
         run: sbt ++${{ matrix.scala }} 'project agent' nativeImage

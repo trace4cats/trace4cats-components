@@ -29,7 +29,7 @@ lazy val publishSettings = commonSettings ++ Seq(
 )
 
 lazy val graalSettings = Seq(
-  nativeImageVersion := "20.1.0",
+  nativeImageVersion := "22.1.0",
   nativeImageJvm := "graalvm-java11",
   nativeImageOptions ++= Seq(
     "--verbose",
@@ -44,7 +44,7 @@ lazy val graalSettings = Seq(
     "-H:IncludeResources='.*'",
     "-H:+ReportExceptionStackTraces",
     "-H:+ReportUnsupportedElementsAtRuntime",
-    "-H:+TraceClassInitialization",
+    "-H:TraceClassInitialization=true",
     "-H:+PrintClassInitialization",
     "-H:+RemoveSaturatedTypeFlows",
     "-H:+StackTrace",
@@ -56,14 +56,17 @@ lazy val graalSettings = Seq(
     "--initialize-at-build-time=scala.runtime.Statics$VM",
     "--initialize-at-build-time=sun.instrument.InstrumentationImpl",
     "--initialize-at-build-time=scala.Symbol$",
-    "--initialize-at-build-time=ch.qos.logback",
     "--initialize-at-build-time=org.slf4j.impl.StaticLoggerBinder",
+    "--initialize-at-build-time=io.odin.formatter.Formatter$",
+    "--initialize-at-build-time=io.odin.formatter.options.ThrowableFormat$",
     "--initialize-at-build-time=org.slf4j.LoggerFactory",
     "--initialize-at-build-time=org.apache.kafka,net.jpountz",
     "--initialize-at-build-time=com.github.luben.zstd.ZstdInputStream",
     "--initialize-at-build-time=com.github.luben.zstd.ZstdOutputStream",
-    "--initialize-at-run-time=com.sun.management.internal.Flag",
-    "--initialize-at-run-time=com.sun.management.internal.OperatingSystemImpl"
+    "--initialize-at-build-time=com.sun.management.internal.Flag",
+    "--initialize-at-build-time=com.sun.management.internal.OperatingSystemImpl",
+    "--initialize-at-run-time=org.apache.kafka.common.security.authenticator.SaslClientAuthenticator",
+    "--initialize-at-run-time=org.apache.kafka.common.security.oauthbearer.internals.expiring.ExpiringCredentialRefreshingLogin",
   )
 )
 
@@ -72,7 +75,7 @@ Global / excludeLintKeys ++= Set(nativeImageVersion, nativeImageJvm)
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .settings(name := "Trace4Cats Components")
-  .aggregate(agent, `agent-common`, `agent-kafka`, collector, `collector-common`, `collector-lite`)
+  .aggregate(common, agent, `agent-common`, `agent-kafka`, collector, `collector-common`, `collector-lite`)
 
 lazy val `agent-common` = (project in file("modules/agent-common"))
   .settings(publishSettings)
@@ -80,13 +83,16 @@ lazy val `agent-common` = (project in file("modules/agent-common"))
     name := "trace4cats-agent-common",
     libraryDependencies ++= Seq(
       Dependencies.declineEffect,
-      Dependencies.log4cats,
-      Dependencies.logback,
       Dependencies.trace4catsAvroServer,
       Dependencies.trace4catsCore,
       Dependencies.trace4catsMeta,
     )
   )
+  .dependsOn(common)
+
+lazy val common = (project in file("modules/common"))
+  .settings(publishSettings)
+  .settings(name := "trace4cats-common", libraryDependencies ++= Seq(Dependencies.catsEffect, Dependencies.odin))
 
 lazy val agent = (project in file("modules/agent"))
   .settings(noPublishSettings)
@@ -114,7 +120,6 @@ lazy val `collector-common` = (project in file("modules/collector-common"))
       Dependencies.circeYaml,
       Dependencies.declineEffect,
       Dependencies.http4sJdkClient,
-      Dependencies.log4cats,
       Dependencies.trace4catsCore,
       Dependencies.trace4catsMeta,
       Dependencies.trace4catsAvroExporter,
@@ -132,6 +137,7 @@ lazy val `collector-common` = (project in file("modules/collector-common"))
       Dependencies.trace4catsTailSamplingRedisStore,
     )
   )
+  .dependsOn(common)
 
 lazy val collector = (project in file("modules/collector"))
   .settings(noPublishSettings)
@@ -151,8 +157,6 @@ lazy val collector = (project in file("modules/collector"))
     libraryDependencies ++= Seq(
       Dependencies.declineEffect,
       Dependencies.grpcOkHttp,
-      Dependencies.log4cats,
-      Dependencies.logback,
       Dependencies.trace4catsOpentelemetryJaegerExporter,
       Dependencies.trace4catsOpentelemetryOltpGrpcExporter,
       Dependencies.trace4catsStackdriverGrpcExporter
@@ -166,12 +170,7 @@ lazy val `collector-lite` = (project in file("modules/collector-lite"))
   .settings(graalSettings)
   .settings(
     name := "trace4cats-collector-lite",
-    libraryDependencies ++= Seq(
-      Dependencies.declineEffect,
-      Dependencies.log4cats,
-      Dependencies.logback,
-      Dependencies.graalKafkaClient
-    )
+    libraryDependencies ++= Seq(Dependencies.declineEffect, Dependencies.graalKafkaClient)
   )
   .dependsOn(`collector-common`)
   .enablePlugins(NativeImagePlugin)
