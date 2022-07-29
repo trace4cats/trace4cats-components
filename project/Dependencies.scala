@@ -5,7 +5,7 @@ object Dependencies {
     val trace4cats = "0.13.1+67-a7d9b849"
     val trace4catsAvro = "0.13.1+17-f490ab04"
     val trace4catsAvroKafka = "0.13.1+16-ff3bad5c"
-    val trace4catsDatadog = "0.13.1+17-fb190468"
+    val trace4catsDatadog = "0.13.1+26-429cb3ca"
     val trace4catsJaeger = "0.13.1+15-1089463b"
     val trace4catsOpentelemetry = "0.13.1+26-752cf951"
     val trace4catsCloudtrace = "0.13.1+23-2f138f66"
