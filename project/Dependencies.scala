@@ -2,28 +2,46 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    val trace4cats = "0.13.1+67-a7d9b849"
-    val trace4catsAvro = "0.13.1+17-f490ab04"
-    val trace4catsAvroKafka = "0.13.1+16-ff3bad5c"
-    val trace4catsDatadog = "0.13.1+17-fb190468"
-    val trace4catsJaeger = "0.13.1+15-1089463b"
-    val trace4catsOpentelemetry = "0.13.1+26-752cf951"
-    val trace4catsCloudtrace = "0.13.1+23-2f138f66"
-    val trace4catsNewrelic = "0.13.1+18-7e343f59"
-    val trace4catsZipkin = "0.13.1+17-1553c1c6"
-    val trace4catsTailSamplingExtras = "0.13.1+16-f4b6dc0d"
+    val trace4cats = "0.14.0"
+
+    val trace4catsAvro = "0.14.0"
+
+    val trace4catsAvroKafka = "0.14.0"
+
+    val trace4catsDatadog = "0.14.0"
+
+    val trace4catsJaeger = "0.14.0"
+
+    val trace4catsOpentelemetry = "0.14.0"
+
+    val trace4catsCloudtrace = "0.14.0"
+
+    val trace4catsNewrelic = "0.14.0"
+
+    val trace4catsZipkin = "0.14.0"
+
+    val trace4catsTailSamplingExtras = "0.14.0"
 
     val catsEffect = "3.3.14"
+
     val circe = "0.14.1"
+
     val circeYaml = "0.14.1"
+
     val decline = "2.3.0"
+
     val graalKafkaClient = "0.1.0"
+
     val grpc = "1.48.0"
+
     val http4sJdkClient = "0.7.0"
+
     val odin = "0.13.0"
+
     val scala213 = "2.13.8"
 
     val kindProjector = "0.13.2"
+
     val betterMonadicFor = "0.3.1"
   }
 
