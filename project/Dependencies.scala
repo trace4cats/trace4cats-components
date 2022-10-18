@@ -28,7 +28,7 @@ object Dependencies {
 
     val circeYaml = "0.14.1"
 
-    val decline = "2.3.0"
+    val decline = "2.3.1"
 
     val graalKafkaClient = "0.1.0"
 
