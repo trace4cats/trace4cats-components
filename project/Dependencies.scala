@@ -2,25 +2,25 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    val trace4cats = "0.14.0"
+    val trace4cats = "0.14.1"
 
-    val trace4catsAvro = "0.14.0"
+    val trace4catsAvro = "0.14.1"
 
-    val trace4catsAvroKafka = "0.14.0"
+    val trace4catsAvroKafka = "0.14.1"
 
-    val trace4catsDatadog = "0.14.0"
+    val trace4catsDatadog = "0.14.1"
 
-    val trace4catsJaeger = "0.14.0"
+    val trace4catsJaeger = "0.14.1"
 
-    val trace4catsOpentelemetry = "0.14.0"
+    val trace4catsOpentelemetry = "0.14.1"
 
-    val trace4catsCloudtrace = "0.14.0"
+    val trace4catsCloudtrace = "0.14.1"
 
-    val trace4catsNewrelic = "0.14.0"
+    val trace4catsNewrelic = "0.14.1"
 
-    val trace4catsZipkin = "0.14.0"
+    val trace4catsZipkin = "0.14.1"
 
-    val trace4catsTailSamplingExtras = "0.14.0"
+    val trace4catsTailSamplingExtras = "0.14.1"
 
     val catsEffect = "3.3.14"
 
