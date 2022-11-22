@@ -34,7 +34,7 @@ object Dependencies {
 
     val grpc = "1.48.2"
 
-    val http4sJdkClient = "0.7.0"
+    val http4sJdkClient = "0.8.0"
 
     val odin = "0.13.0"
 
