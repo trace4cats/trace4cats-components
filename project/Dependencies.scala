@@ -22,7 +22,7 @@ object Dependencies {
 
     val trace4catsTailSamplingExtras = "0.14.0"
 
-    val catsEffect = "3.3.14"
+    val catsEffect = "3.4.4"
 
     val circe = "0.14.1"
 
