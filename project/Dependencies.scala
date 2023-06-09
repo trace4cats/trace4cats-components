@@ -38,7 +38,7 @@ object Dependencies {
 
     val odin = "0.13.0"
 
-    val scala213 = "2.13.8"
+    val scala213 = "2.13.11"
 
     val kindProjector = "0.13.2"
 
