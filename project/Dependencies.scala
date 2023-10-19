@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    val trace4cats = "0.14.0"
+    val trace4cats = "0.14.6"
 
     val trace4catsAvro = "0.14.0"
 
