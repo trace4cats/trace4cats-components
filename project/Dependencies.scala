@@ -32,7 +32,7 @@ object Dependencies {
 
     val graalKafkaClient = "0.1.0"
 
-    val grpc = "1.48.2"
+    val grpc = "1.61.0"
 
     val http4sJdkClient = "0.7.0"
 
