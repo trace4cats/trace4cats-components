@@ -35,7 +35,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
   val common = Seq(
     WorkflowStep.Use(ref = UseRef.Public("docker", "setup-buildx-action", "v1"), name = Some("Set up Docker Buildx")),
     WorkflowStep.Use(
-      ref = UseRef.Public("docker", "login-action", "v1"),
+      ref = UseRef.Public("docker", "login-action", "v2"),
       name = Some("Login to Dockerhub"),
       params = Map("username" -> dockerhubUsername, "password" -> "${{ secrets.DOCKERHUB }}")
     ),
