@@ -146,7 +146,7 @@ jobs:
         run: sbt ++${{ matrix.scala }} 'project agent' nativeImage
 
       - name: Build Docker image for 'agent'
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           tags: 'janstenpickle/trace4cats-agent:${{ github.run_number }}'
           context: modules/agent/target/native-image
@@ -170,7 +170,7 @@ jobs:
         run: sbt ++${{ matrix.scala }} 'project agent-kafka' nativeImage
 
       - name: Build Docker image for 'agent-kafka'
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           tags: 'janstenpickle/trace4cats-agent-kafka:${{ github.run_number }}'
           context: modules/agent-kafka/target/native-image
@@ -194,7 +194,7 @@ jobs:
         run: sbt ++${{ matrix.scala }} 'project collector-lite' nativeImage
 
       - name: Build Docker image for 'collector-lite'
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           tags: 'janstenpickle/trace4cats-collector-lite:${{ github.run_number }}'
           context: modules/collector-lite/target/native-image
