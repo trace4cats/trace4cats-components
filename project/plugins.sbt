@@ -1,6 +1,6 @@
 addSbtPlugin("org.scalameta"  % "sbt-scalafmt"         % "2.5.2")
 addSbtPlugin("org.typelevel"  % "sbt-tpolecat"         % "0.5.1")
-addSbtPlugin("com.github.sbt" % "sbt-native-packager"  % "1.9.16")
+addSbtPlugin("com.github.sbt" % "sbt-native-packager"  % "1.10.0")
 addSbtPlugin("org.scalameta"  % "sbt-native-image"     % "0.3.4")
 addSbtPlugin("com.codecommit" % "sbt-github-actions"   % "0.14.2")
 addSbtPlugin("io.shiftleft"   % "sbt-ci-release-early" % "2.0.45")
