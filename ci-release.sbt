@@ -33,7 +33,7 @@ ThisBuild / githubWorkflowPublishPostamble ++= {
   val releaseVersion = "${{ env.RELEASE_VERSION }}"
 
   val common = Seq(
-    WorkflowStep.Use(ref = UseRef.Public("docker", "setup-buildx-action", "v1"), name = Some("Set up Docker Buildx")),
+    WorkflowStep.Use(ref = UseRef.Public("docker", "setup-buildx-action", "v2"), name = Some("Set up Docker Buildx")),
     WorkflowStep.Use(
       ref = UseRef.Public("docker", "login-action", "v1"),
       name = Some("Login to Dockerhub"),
