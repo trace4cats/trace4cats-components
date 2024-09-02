@@ -36,7 +36,7 @@ object Dependencies {
 
     val http4sJdkClient = "0.7.0"
 
-    val odin = "0.13.0"
+    val odin = "0.14.0"
 
     val scala213 = "2.13.8"
 
@@ -85,7 +85,7 @@ object Dependencies {
   lazy val graalKafkaClient = "io.janstenpickle" % "graal-kafka-client"     % Versions.graalKafkaClient
   lazy val grpcOkHttp = "io.grpc"                % "grpc-okhttp"            % Versions.grpc
   lazy val http4sJdkClient = "org.http4s"       %% "http4s-jdk-http-client" % Versions.http4sJdkClient
-  lazy val odin = "com.github.valskalla"        %% "odin-slf4j"             % Versions.odin
+  lazy val odin = "dev.scalafreaks"             %% "odin-slf4j"             % Versions.odin
 
   lazy val kindProjector = ("org.typelevel" % "kind-projector"     % Versions.kindProjector).cross(CrossVersion.full)
   lazy val betterMonadicFor = "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
