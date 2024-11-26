@@ -12,7 +12,7 @@ object Dependencies {
 
     val trace4catsJaeger = "0.14.0"
 
-    val trace4catsOpentelemetry = "0.14.0"
+    val trace4catsOpentelemetry = "0.14.4"
 
     val trace4catsCloudtrace = "0.14.0"
 
