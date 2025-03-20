@@ -4,7 +4,7 @@ object Dependencies {
   object Versions {
     val trace4cats = "0.14.0"
 
-    val trace4catsAvro = "0.14.0"
+    val trace4catsAvro = "0.15.0"
 
     val trace4catsAvroKafka = "0.14.0"
 
